@@ -1,24 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
     tools:showIn="@layout/activity_main"
+    android:gravity="center"
+    android:orientation="vertical"
     android:background="#FFFFFF">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/welcome"
+        android:textSize="50sp"
+        android:textColor="@color/colorPrimary"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_margin="20dp"
+        android:textColor="@color/colorPrimary"
+        android:lineSpacingExtra="3dp"
+        android:text="@string/summary_blurb"/>
 
     <Button
         android:id="@+id/signin_button"
         android:layout_centerInParent="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Sign In With Blockstack"
-        android:textSize="22sp"
-        android:paddingHorizontal="20dp"
-        android:paddingVertical="10dp"
-        android:background="#000000"
+        android:text="@string/signin"
+        android:textSize="16sp"
+        android:paddingHorizontal="30dp"
+        android:paddingVertical="14dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/bg_blockstack_signin"
         android:textColor="#FFFFFF"
         android:enabled="false"/>
 
-</RelativeLayout>
+</LinearLayout>
