@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import org.blockstack.android.sdk.*
 import android.support.v7.app.AppCompatActivity
+import android.view.View
 import android.widget.Toast
 import kotlinx.android.synthetic.main.content_main.*
 
@@ -30,15 +31,18 @@ class MainActivity : AppCompatActivity() {
             signin_button.isEnabled = true
         })
 
-        session.redirectUserToSignIn { userData ->
-            // signed in!
-            Toast.makeText(this, "You are signed in", Toast.LENGTH_LONG).show();
+        signin_button.setOnClickListener { v: View ->
+            session.redirectUserToSignIn { userData ->
+                // signed in!
+                Toast.makeText(this, "Signed in as ${userData.did}", Toast.LENGTH_LONG).show();
 
-            // update your UI with signed in state
-            // runOnUiThread {
-            //     onSignIn(userData)
-            // }
+                // update your UI with signed in state
+                // runOnUiThread {
+                //     onSignIn(userData)
+                // }
+            }
         }
+
     }
 
     override fun onNewIntent(intent: Intent?) {
