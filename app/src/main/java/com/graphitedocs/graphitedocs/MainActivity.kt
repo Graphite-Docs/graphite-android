@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity() {
 //        setSupportActionBar(toolbar)
 
 
-        val appDomain = URI("https://graphitedocs.com")
+        val appDomain = URI("https://app.graphitedocs.com")
         val redirectURI = URI("${appDomain}/redirect")
         val manifestURI = URI("${appDomain}/manifest.json")
         val scopes = arrayOf("store_write")
@@ -37,12 +37,17 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "Signed in as ${userData.did}", Toast.LENGTH_LONG).show();
 
                 // update your UI with signed in state
-                // runOnUiThread {
-                //     onSignIn(userData)
-                // }
+                 runOnUiThread {
+                     onSignIn(userData)
+                 }
             }
         }
 
+    }
+
+    private fun onSignIn(userData: UserData) {
+        val intent = Intent(this, SelectAppActivity::class.java)
+        startActivity(intent)
     }
 
     override fun onNewIntent(intent: Intent?) {
