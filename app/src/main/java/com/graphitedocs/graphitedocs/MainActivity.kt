@@ -37,7 +37,6 @@ class MainActivity : AppCompatActivity() {
             blockstackSession().redirectUserToSignIn { userData ->
                 // signed in!
                 Log.d(TAG, "signed in!")
-                Toast.makeText(this, "Signed in as ${userData.did}", Toast.LENGTH_LONG).show();
 
                 // update your UI with signed in state
                  runOnUiThread {
@@ -76,6 +75,9 @@ class MainActivity : AppCompatActivity() {
                 Log.d(TAG, "authResponse: ${authResponse}")
                 blockstackSession().handlePendingSignIn(authResponse, { userData ->
                     Log.d(TAG, "signed in!")
+//                    Log.d(TAG, "userData: ${userData.json}")
+                    Toast.makeText(this, "Signed in as ${userData.json.getJSONObject("profile").getString("name")}", Toast.LENGTH_LONG).show();
+
                     runOnUiThread {
                         onSignIn(userData)
                     }
