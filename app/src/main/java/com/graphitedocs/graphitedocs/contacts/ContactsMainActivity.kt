@@ -1,0 +1,13 @@
+package com.graphitedocs.graphitedocs.contacts
+
+import android.support.v7.app.AppCompatActivity
+import android.os.Bundle
+import com.graphitedocs.graphitedocs.R
+
+class ContactsMainActivity : AppCompatActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_contacts_main)
+    }
+}
