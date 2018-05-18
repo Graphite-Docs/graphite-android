@@ -27,7 +27,7 @@
         android:text="@string/summary_blurb"/>
 
     <Button
-        android:id="@+id/signin_button"
+        android:id="@+id/signInButton"
         android:layout_centerInParent="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -4,4 +4,7 @@
     <string name="summary_blurb">Graphite is a decentralized and encrypted replacement for Google\'s G-Suite. Built on Blockstack and powered by the Bitcoin Blockchain.</string>
     <string name="welcome">Welcome!</string>
     <string name="signin">Sign In With Blockstack</string>
+    <string name="documents">Documents</string>
+    <string name="contacts">Contacts</string>
+    <string name="vault">Vault</string>
 </resources>

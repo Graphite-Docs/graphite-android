@@ -8,6 +8,7 @@
     tools:context=".SelectAppActivity">
 
     <LinearLayout
+        android:id="@+id/documentsContainer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="horizontal"
@@ -16,7 +17,6 @@
         android:layout_weight="1">
 
         <ImageView
-            android:id="@+id/docs_imageview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_documents"/>
@@ -24,13 +24,14 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Documents"
+            android:text="@string/documents"
             android:textSize="30sp"
             android:layout_marginLeft="50dp"/>
 
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/contactsContainer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="horizontal"
@@ -39,7 +40,6 @@
         android:layout_weight="1">
 
         <ImageView
-            android:id="@+id/vault_imageview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_contacts"/>
@@ -47,13 +47,14 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Contacts"
+            android:text="@string/contacts"
             android:textSize="30sp"
             android:layout_marginLeft="50dp"/>
 
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/vaultContainer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="horizontal"
@@ -62,7 +63,6 @@
         android:layout_weight="1">
 
         <ImageView
-            android:id="@+id/contacts_imageview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_vault"/>
@@ -70,7 +70,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Vault"
+            android:text="@string/vault"
             android:textSize="30sp"
             android:layout_marginLeft="40dp"/>
     </LinearLayout>
