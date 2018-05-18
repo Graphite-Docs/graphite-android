@@ -14,7 +14,8 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -22,14 +23,20 @@
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <data android:scheme="graphitedocs" />
             </intent-filter>
         </activity>
-        <activity android:name=".SelectAppActivity">
+        <activity android:name=".SelectAppActivity" />
+        <activity android:name=".docs.DocsMainActivity"
+            android:label="@string/documents" >
 
         </activity>
+        <activity android:name=".contacts.ContactsMainActivity" />
+        <activity android:name=".vault.VaultMainActivity"></activity>
     </application>
 
 </manifest>
