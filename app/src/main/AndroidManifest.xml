@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:name=".GraphiteApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -13,7 +14,6 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
-            android:label="@string/title_activity_main"
             android:theme="@style/AppTheme.NoActionBar"
             android:launchMode="singleTask">
             <intent-filter>
@@ -31,8 +31,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".SelectAppActivity" />
-        <activity android:name=".docs.DocsMainActivity"
-            android:label="@string/documents" >
+        <activity android:name=".docs.DocsMainActivity">
 
         </activity>
         <activity android:name=".contacts.ContactsMainActivity" />
