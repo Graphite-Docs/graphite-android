@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="20dp"
+    android:background="@android:color/white"
     tools:context=".docs.DocsMainActivity">
 
 
@@ -11,7 +11,6 @@
         android:id="@+id/rvDocs"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="50dp"
         android:clipToPadding="true"
         android:saveEnabled="false" />
 

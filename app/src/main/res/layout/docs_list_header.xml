@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/lightGrey"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/docs_list_tv_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:paddingLeft="10dp"
+        android:orientation="horizontal"
+        android:text="April 6, 2018"
+        android:textColor="@color/mediumGrey"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:focusable="true" />
+</LinearLayout>

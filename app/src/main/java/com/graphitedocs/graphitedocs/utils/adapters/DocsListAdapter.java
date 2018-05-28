@@ -5,41 +5,76 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.graphitedocs.graphitedocs.R;
+import com.graphitedocs.graphitedocs.utils.models.DocsListItem;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class DocsListAdapter extends RecyclerView.Adapter<DocsListAdapter.Holder> {
 
     Context mContext;
-    ArrayList<String> mArrayListString;
+    ArrayList<DocsListItem> mArrayList;
 
-    public DocsListAdapter(Context mContext, ArrayList<String> mArrayListString) {
+    public DocsListAdapter(Context mContext, ArrayList<DocsListItem> mArrayList) {
         this.mContext = mContext;
-        this.mArrayListString = mArrayListString;
+        this.mArrayList = mArrayList;
     }
 
     @Override
     public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.activity_contacts_main, parent, false);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.docs_list_item, parent, false);
         return new Holder(view);
     }
 
     @Override
     public void onBindViewHolder(Holder holder, int position) {
 //        holder.mTextView.setText(mArrayListString.get(position));
+        DocsListItem item = mArrayList.get(position);
+
+        holder.titleTextView.setText(item.getTitle());
+
+        if (item.getCollaborators() != null) {
+            holder.collaboratorsTextView.setText(join(item.getCollaborators()));
+        }
+
+
+        if (item.getTags() != null) {
+            holder.tagsTextView.setText(join(item.getTags()));
+
+        }
+
+    }
+
+    private String join(List<String> list) {
+        StringBuilder text = new StringBuilder();
+
+        for (int i = 0; i < list.size(); i++) {
+            text.append(list.get(i));
+            if (i != list.size() - 1) text.append(", ");
+        }
+        return text.toString();
     }
 
     @Override
     public int getItemCount() {
-        return mArrayListString.size();
+        return mArrayList.size();
     }
 
     public class Holder extends RecyclerView.ViewHolder {
 
+        private TextView titleTextView;
+        private TextView collaboratorsTextView;
+        private TextView tagsTextView;
+
         public Holder(View itemView) {
             super(itemView);
+
+            titleTextView = itemView.findViewById(R.id.docs_list_title);
+            collaboratorsTextView = itemView.findViewById(R.id.docs_list_collaborators);
+            tagsTextView = itemView.findViewById(R.id.docs_list_tags);
         }
     }
 }

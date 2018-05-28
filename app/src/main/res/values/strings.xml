@@ -7,4 +7,7 @@
     <string name="documents">Documents</string>
     <string name="contacts">Contacts</string>
     <string name="vault">Vault</string>
+
+    <!--Documents Files-->
+    <string name="documents_list">documents.json</string>
 </resources>

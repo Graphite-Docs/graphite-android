@@ -13,6 +13,7 @@ open class GraphiteActivity : AppCompatActivity() {
 
     private val TAG = GraphiteActivity::class.java.simpleName
     private var _blockstackSession: BlockstackSession? = null
+    private var _userData: UserData? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,7 +50,11 @@ open class GraphiteActivity : AppCompatActivity() {
     }
 
     open fun onSignIn(userData: UserData) {
+        // Should only do this once per activity session
+        // Write to shared preferences
+        _userData = userData
         Log.d(TAG, "signed in!")
+        Log.d(TAG, userData.json.toString())
         Toast.makeText(this, "Signed in as ${userData.json.getJSONObject("profile").getString("name")}", Toast.LENGTH_LONG).show();
     }
 
@@ -90,6 +95,15 @@ open class GraphiteActivity : AppCompatActivity() {
             return session
         } else {
             throw IllegalStateException("No session.")
+        }
+    }
+
+    fun userData() : UserData {
+        val data = _userData
+        if (data != null) {
+            return data
+        } else {
+            throw IllegalStateException("No user data.")
         }
     }
 }
