@@ -44,6 +44,7 @@ dependencies {
     annotationProcessor 'com.google.dagger:dagger-android-processor:2.16'
 
     implementation 'com.github.blockstack:blockstack-android:-SNAPSHOT'
+
 }
 
 kapt {
