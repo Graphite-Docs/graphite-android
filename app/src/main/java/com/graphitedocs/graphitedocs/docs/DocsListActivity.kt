@@ -2,7 +2,6 @@ package com.graphitedocs.graphitedocs.docs
 
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
-import android.util.Log
 import android.widget.Adapter
 import com.graphitedocs.graphitedocs.R
 import com.graphitedocs.graphitedocs.utils.GraphiteActivity
@@ -10,12 +9,11 @@ import com.graphitedocs.graphitedocs.utils.adapters.DocsListAdapter
 import com.graphitedocs.graphitedocs.utils.adapters.RecyclerSectionItemDecoration
 import com.graphitedocs.graphitedocs.utils.models.DocsListItem
 import kotlinx.android.synthetic.main.activity_docs_main.*
-import org.blockstack.android.sdk.GetFileOptions
 
-class DocsMainActivity : GraphiteActivity() {
+class DocsListActivity : GraphiteActivity() {
 
     private var adapter: Adapter? = null
-    private val TAG = DocsMainActivity::class.java.simpleName
+    private val TAG = DocsListActivity::class.java.simpleName
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

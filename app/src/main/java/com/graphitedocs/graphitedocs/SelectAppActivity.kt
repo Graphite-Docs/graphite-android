@@ -3,7 +3,7 @@ package com.graphitedocs.graphitedocs
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import com.graphitedocs.graphitedocs.docs.DocsMainActivity
+import com.graphitedocs.graphitedocs.docs.DocsListActivity
 import kotlinx.android.synthetic.main.activity_select_app.*
 
 class SelectAppActivity : AppCompatActivity() {
@@ -13,7 +13,7 @@ class SelectAppActivity : AppCompatActivity() {
         setContentView(R.layout.activity_select_app)
 
         documentsContainer.setOnClickListener {
-            val intent = Intent(this, DocsMainActivity::class.java)
+            val intent = Intent(this, DocsListActivity::class.java)
             startActivity(intent)
         }
 

@@ -1,6 +1,7 @@
 package com.graphitedocs.graphitedocs.utils.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.graphitedocs.graphitedocs.R;
+import com.graphitedocs.graphitedocs.docs.DocsActivity;
 import com.graphitedocs.graphitedocs.utils.models.DocsListItem;
 
 import java.util.ArrayList;
@@ -31,7 +33,6 @@ public class DocsListAdapter extends RecyclerView.Adapter<DocsListAdapter.Holder
 
     @Override
     public void onBindViewHolder(Holder holder, int position) {
-//        holder.mTextView.setText(mArrayListString.get(position));
         DocsListItem item = mArrayList.get(position);
 
         holder.titleTextView.setText(item.getTitle());
@@ -43,8 +44,15 @@ public class DocsListAdapter extends RecyclerView.Adapter<DocsListAdapter.Holder
 
         if (item.getTags() != null) {
             holder.tagsTextView.setText(join(item.getTags()));
-
         }
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent newIntent = new Intent(mContext, DocsActivity.class);
+                mContext.startActivity(newIntent);
+            }
+        });
 
     }
 

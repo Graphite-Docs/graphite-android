@@ -14,8 +14,8 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".MainActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:launchMode="singleTask">
+            android:launchMode="singleTask"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -31,11 +31,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".SelectAppActivity" />
-        <activity android:name=".docs.DocsMainActivity">
-
-        </activity>
+        <activity android:name=".docs.DocsListActivity"></activity>
         <activity android:name=".contacts.ContactsMainActivity" />
-        <activity android:name=".vault.VaultMainActivity"></activity>
+        <activity android:name=".vault.VaultMainActivity" />
+        <activity android:name=".docs.DocsActivity"></activity>
     </application>
 
 </manifest>
