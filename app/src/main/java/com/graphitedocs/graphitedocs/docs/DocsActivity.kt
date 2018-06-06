@@ -129,6 +129,7 @@ class DocsActivity : GraphiteActivity() {
 
         editDocsFab.setOnClickListener {
             isPreview = false
+
             docsEditText.visibility = View.VISIBLE
             bottomDocsEditBar.visibility = View.VISIBLE
 

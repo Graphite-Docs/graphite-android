@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="false"
+    android:id="@+id/mainLayout"
     tools:context=".docs.DocsActivity">
 
     <com.graphitedocs.graphitedocs.uiviews.GraphiteEditText
@@ -38,8 +39,8 @@
         android:layout_width="56dp"
         android:layout_height="56dp"
         android:layout_gravity="end|bottom"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
         android:src="@drawable/ic_mode_edit_24dp"
         android:layout_marginRight="16dp"
         android:layout_marginBottom="27dp" />
@@ -49,7 +50,7 @@
         android:layout_width="match_parent"
         android:layout_height="52dp"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_alignParentBottom="true"
         android:gravity="center"
         android:background="@drawable/bg_bottom_docs_edit_bar">
 
@@ -109,4 +110,4 @@
 
     </LinearLayout>
 
-</android.support.constraint.ConstraintLayout>
+</RelativeLayout>

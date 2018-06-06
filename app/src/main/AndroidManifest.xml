@@ -34,7 +34,8 @@
         <activity android:name=".docs.DocsListActivity"></activity>
         <activity android:name=".contacts.ContactsMainActivity" />
         <activity android:name=".vault.VaultMainActivity" />
-        <activity android:name=".docs.DocsActivity"></activity>
+        <activity android:name=".docs.DocsActivity"
+            android:windowSoftInputMode="adjustResize"></activity>
     </application>
 
 </manifest>
