@@ -32,4 +32,16 @@
             android:layout_height="wrap_content" />
 
     </ScrollView>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/editDocsFab"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_gravity="end|bottom"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:src="@drawable/ic_mode_edit_24dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="27dp" />
+
 </android.support.constraint.ConstraintLayout>

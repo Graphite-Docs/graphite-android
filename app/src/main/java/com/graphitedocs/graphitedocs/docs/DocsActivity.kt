@@ -7,14 +7,18 @@ import android.text.Html
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewGroup
 import com.graphitedocs.graphitedocs.R
 import kotlinx.android.synthetic.main.activity_docs.*
+import android.widget.LinearLayout
+import com.graphitedocs.graphitedocs.utils.GraphiteActivity
 
 
-class DocsActivity : AppCompatActivity() {
+class DocsActivity : GraphiteActivity() {
+
+    val FAB_MARGIN = 16f
 
     var gestureDetector : GestureDetector? = null
-
     var isPreview : Boolean = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -46,6 +50,7 @@ class DocsActivity : AppCompatActivity() {
                         decorView.systemUiVisibility = uiOptions
 
                         actionbar.show()
+                        editDocsFab.show()
                         return true
                     }
                 }
@@ -79,6 +84,12 @@ class DocsActivity : AppCompatActivity() {
 
 
                             actionbar.hide()
+                            editDocsFab.hide()
+
+                            val marginParams : ViewGroup.MarginLayoutParams= editDocsFab.layoutParams as ViewGroup.MarginLayoutParams
+                            marginParams.setMargins(0, 0, convertDpToPixel(FAB_MARGIN, this@DocsActivity).toInt(),
+                                    convertDpToPixel(FAB_MARGIN, this@DocsActivity).toInt() + getBottomNavBarHeight())
+
                             return true
                         }
                     } else {
@@ -91,6 +102,7 @@ class DocsActivity : AppCompatActivity() {
                             decorView.systemUiVisibility = uiOptions
 
                             actionbar.show()
+                            editDocsFab.show()
                             return true
                         }
                     }
@@ -111,6 +123,12 @@ class DocsActivity : AppCompatActivity() {
             }
         })
 
+        editDocsFab.setOnClickListener {
+            isPreview = false
+            docsEditText.visibility = View.VISIBLE
+            previewScrollView.visibility = View.GONE
+            editDocsFab.hide()
+        }
     }
 
 
@@ -119,6 +137,17 @@ class DocsActivity : AppCompatActivity() {
             super.onBackPressed()
         } else {
             // Change to preview mode
+            isPreview = true
+            docsEditText.visibility = View.GONE
+            previewScrollView.visibility = View.VISIBLE
+            editDocsFab.show()
         }
+    }
+
+    fun getBottomNavBarHeight() : Int {
+        val resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android")
+        return if (resourceId > 0) {
+            resources.getDimensionPixelSize(resourceId)
+        } else 0
     }
 }
