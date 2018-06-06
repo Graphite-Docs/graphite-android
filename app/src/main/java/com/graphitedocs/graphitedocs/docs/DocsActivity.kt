@@ -1,17 +1,14 @@
 package com.graphitedocs.graphitedocs.docs
 
 import android.os.Build
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.text.Html
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import com.graphitedocs.graphitedocs.R
 import kotlinx.android.synthetic.main.activity_docs.*
-import android.R.attr.duration
-import android.widget.Toast
-
 
 
 class DocsActivity : AppCompatActivity() {
