@@ -119,7 +119,7 @@ class DocsActivity : GraphiteActivity() {
 
         })
 
-//        TODO: Dsabled fullscreen mode for now until we find a better way to do it
+//        TODO: Disabled fullscreen mode for now until we find a better way to do it
 //        previewScrollView.setOnTouchListener(object : View.OnTouchListener {
 //            override fun onTouch(v : View, event : MotionEvent) : Boolean {
 //

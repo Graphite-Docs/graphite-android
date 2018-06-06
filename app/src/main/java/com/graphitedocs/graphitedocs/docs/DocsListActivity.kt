@@ -44,7 +44,8 @@ class DocsListActivity : GraphiteActivity() {
         // Create mock data for now
         var doc1 = DocsListItem("Daniel's Story", "May 9, 2018", listOf("danielwang.id"), listOf(""))
         var doc2 = DocsListItem("Justin's Story", "April 1, 2018", listOf("justinhunter.id"), listOf("Story"))
-        var arrayList = arrayListOf(doc1, doc1, doc1, doc1, doc1, doc2)
+        var doc3 = DocsListItem("The Great Gatsby", "March 22, 2018", listOf("graphitetest.id"), listOf("A long story"))
+        var arrayList = arrayListOf(doc1, doc1, doc1, doc1, doc1, doc2, doc2, doc2, doc3, doc3, doc3, doc3, doc3)
 
         return arrayList
     }
