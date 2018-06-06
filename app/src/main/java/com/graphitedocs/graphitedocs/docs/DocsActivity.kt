@@ -26,6 +26,7 @@ class DocsActivity : GraphiteActivity() {
         setContentView(R.layout.activity_docs)
 
         docsEditText.visibility = View.GONE
+        bottomDocsEditBar.visibility = View.GONE
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             previewTextView.text = Html.fromHtml(getString(R.string.test), Html.FROM_HTML_MODE_COMPACT)
@@ -86,9 +87,12 @@ class DocsActivity : GraphiteActivity() {
                             actionbar.hide()
                             editDocsFab.hide()
 
-                            val marginParams : ViewGroup.MarginLayoutParams= editDocsFab.layoutParams as ViewGroup.MarginLayoutParams
-                            marginParams.setMargins(0, 0, convertDpToPixel(FAB_MARGIN, this@DocsActivity).toInt(),
+                            val marginParamsFab : ViewGroup.MarginLayoutParams= editDocsFab.layoutParams as ViewGroup.MarginLayoutParams
+                            marginParamsFab.setMargins(0, 0, convertDpToPixel(FAB_MARGIN, this@DocsActivity).toInt(),
                                     convertDpToPixel(FAB_MARGIN, this@DocsActivity).toInt() + getBottomNavBarHeight())
+
+                            val marginParamsBotBar : ViewGroup.MarginLayoutParams= bottomDocsEditBar.layoutParams as ViewGroup.MarginLayoutParams
+                            marginParamsBotBar.setMargins(0, 0, 0, getBottomNavBarHeight())
 
                             return true
                         }
@@ -126,6 +130,8 @@ class DocsActivity : GraphiteActivity() {
         editDocsFab.setOnClickListener {
             isPreview = false
             docsEditText.visibility = View.VISIBLE
+            bottomDocsEditBar.visibility = View.VISIBLE
+
             previewScrollView.visibility = View.GONE
             editDocsFab.hide()
         }
@@ -140,6 +146,7 @@ class DocsActivity : GraphiteActivity() {
             isPreview = true
             docsEditText.visibility = View.GONE
             previewScrollView.visibility = View.VISIBLE
+            bottomDocsEditBar.visibility = View.GONE
             editDocsFab.show()
         }
     }

@@ -44,4 +44,69 @@
         android:layout_marginRight="16dp"
         android:layout_marginBottom="27dp" />
 
+    <LinearLayout
+        android:id="@+id/bottomDocsEditBar"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:gravity="center"
+        android:background="@drawable/bg_bottom_docs_edit_bar">
+
+        <ImageButton
+            android:id="@+id/boldButton"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_format_bold_32dp"
+            android:tooltipText="@string/bold_tooltip"
+            style="?android:attr/borderlessButtonStyle" />
+
+        <ImageButton
+            android:id="@+id/italicButton"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_format_italic_32dp"
+            android:tooltipText="@string/italic_tooltip"
+            style="?android:attr/borderlessButtonStyle"/>
+
+        <ImageButton
+            android:id="@+id/underlineButton"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_format_underlined_32dp"
+            android:tooltipText="@string/underline_tooltip"
+            style="?android:attr/borderlessButtonStyle"/>
+
+        <ImageButton
+            android:id="@+id/colorTextButton"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_format_color_text_32dp"
+            android:tooltipText="@string/text_color_tooltip"
+            style="?android:attr/borderlessButtonStyle"/>
+
+        <ImageButton
+            android:id="@+id/numListButton"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_format_list_numbered_32dp"
+            android:tooltipText="@string/number__tooltip"
+            style="?android:attr/borderlessButtonStyle"/>
+
+        <ImageButton
+            android:id="@+id/bulletListButton"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_format_list_bulleted_32dp"
+            android:tooltipText="@string/bullets_tooltip"
+            style="?android:attr/borderlessButtonStyle"/>
+
+    </LinearLayout>
+
 </android.support.constraint.ConstraintLayout>
