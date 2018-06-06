@@ -119,13 +119,13 @@ class DocsActivity : GraphiteActivity() {
 
         })
 
-
-        previewScrollView.setOnTouchListener(object : View.OnTouchListener {
-            override fun onTouch(v : View, event : MotionEvent) : Boolean {
-
-                return gestureDetector!!.onTouchEvent(event)
-            }
-        })
+//        TODO: Dsabled fullscreen mode for now until we find a better way to do it
+//        previewScrollView.setOnTouchListener(object : View.OnTouchListener {
+//            override fun onTouch(v : View, event : MotionEvent) : Boolean {
+//
+//                return gestureDetector!!.onTouchEvent(event)
+//            }
+//        })
 
         editDocsFab.setOnClickListener {
             isPreview = false
