@@ -7,13 +7,23 @@
     android:id="@+id/mainLayout"
     tools:context=".docs.DocsActivity">
 
-    <com.graphitedocs.graphitedocs.uiviews.GraphiteEditText
-        android:id="@+id/docsEditText"
+    <ScrollView
+        android:id="@+id/editScrollView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="30dp"
-        android:gravity="top|left"
-        android:background="@android:color/transparent"/>
+        android:layout_height="wrap_content">
+
+        <com.graphitedocs.graphitedocs.uiviews.GraphiteEditText
+            android:id="@+id/docsEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="40dp"
+            android:paddingBottom="60dp"
+            android:textColor="@color/colorPrimary"
+            android:gravity="top|left"
+            android:background="@android:color/transparent"/>
+
+    </ScrollView>
+
 
     <ScrollView
         android:id="@+id/previewScrollView"
@@ -22,8 +32,10 @@
 
         <TextView
             android:id="@+id/previewTextView"
-            android:padding="30dp"
+            android:padding="40dp"
             android:textSize="18sp"
+            android:breakStrategy="simple"
+            android:textColor="@color/colorPrimary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 

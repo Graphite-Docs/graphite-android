@@ -3,7 +3,9 @@ package com.graphitedocs.graphitedocs.docs
 import android.os.Build
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.text.Editable
 import android.text.Html
+import android.text.TextWatcher
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
@@ -21,17 +23,22 @@ class DocsActivity : GraphiteActivity() {
     var gestureDetector : GestureDetector? = null
     var isPreview : Boolean = true
 
+    var docText : String = ""
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_docs)
 
-        docsEditText.visibility = View.GONE
+        docText = loadText()
+        editScrollView.visibility = View.GONE
         bottomDocsEditBar.visibility = View.GONE
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             previewTextView.text = Html.fromHtml(getString(R.string.test), Html.FROM_HTML_MODE_COMPACT)
+            docsEditText.setText(Html.fromHtml(docText, Html.FROM_HTML_MODE_COMPACT))
         } else {
             previewTextView.text = Html.fromHtml(getString(R.string.test))
+            docsEditText.setText(Html.fromHtml(docText))
         }
 
         gestureDetector = GestureDetector(this, object : GestureDetector.OnGestureListener {
@@ -130,12 +137,38 @@ class DocsActivity : GraphiteActivity() {
         editDocsFab.setOnClickListener {
             isPreview = false
 
-            docsEditText.visibility = View.VISIBLE
+            editScrollView.visibility = View.VISIBLE
             bottomDocsEditBar.visibility = View.VISIBLE
 
             previewScrollView.visibility = View.GONE
             editDocsFab.hide()
         }
+
+        docsEditText.addTextChangedListener(object : TextWatcher{
+            override fun afterTextChanged(s: Editable?) {
+                docText = s.toString()
+                saveText(docText)
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+            }
+
+        })
+    }
+
+    fun saveText (text : String) {
+        // Blockstack api save text
+    }
+
+    fun loadText () : String {
+        // Blockstack api get text from file
+
+        return getString(R.string.test)
     }
 
 
@@ -145,7 +178,7 @@ class DocsActivity : GraphiteActivity() {
         } else {
             // Change to preview mode
             isPreview = true
-            docsEditText.visibility = View.GONE
+            editScrollView.visibility = View.GONE
             previewScrollView.visibility = View.VISIBLE
             bottomDocsEditBar.visibility = View.GONE
             editDocsFab.show()
