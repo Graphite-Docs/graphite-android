@@ -2,6 +2,7 @@ package com.graphitedocs.graphitedocs.docs
 
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.widget.Adapter
 import com.graphitedocs.graphitedocs.R
 import com.graphitedocs.graphitedocs.utils.GraphiteActivity
@@ -9,6 +10,9 @@ import com.graphitedocs.graphitedocs.utils.adapters.DocsListAdapter
 import com.graphitedocs.graphitedocs.utils.adapters.RecyclerSectionItemDecoration
 import com.graphitedocs.graphitedocs.utils.models.DocsListItem
 import kotlinx.android.synthetic.main.activity_docs_main.*
+import org.blockstack.android.sdk.GetFileOptions
+import org.blockstack.android.sdk.PutFileOptions
+import java.net.URL
 
 class DocsListActivity : GraphiteActivity() {
 
@@ -20,7 +24,6 @@ class DocsListActivity : GraphiteActivity() {
         setContentView(R.layout.activity_docs_main)
 
         rvDocs.layoutManager = LinearLayoutManager(this)
-        getData()
         // Get data
         rvDocs.adapter = DocsListAdapter(this, getData())
 
@@ -29,6 +32,23 @@ class DocsListActivity : GraphiteActivity() {
     }
 
     private fun getData () : ArrayList<DocsListItem> {
+
+//        val options = PutFileOptions()
+//        blockstackSession().putFile(getString(R.string.documents_list), "Hello Daniel!", options,
+//                {readURL: String ->
+//                    Log.d(TAG, "File stored at: ${readURL}")
+//                    runOnUiThread {
+//                        Log.d("Put file", "File stored at: ${readURL}")
+//                    }
+//                })
+
+        val options = PutFileOptions()
+        blockstackSession().putFile(getString(R.string.documents_list), "Hello Daniel!", options,
+                {readURL: String ->
+                    Log.d(TAG, "File stored at: ${readURL}")
+                    runOnUiThread {
+                    }
+                })
 
 //        val options = GetFileOptions()
 //

@@ -2,17 +2,16 @@ package com.graphitedocs.graphitedocs.docs
 
 import android.os.Build
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.text.Editable
 import android.text.Html
 import android.text.TextWatcher
+import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import com.graphitedocs.graphitedocs.R
 import kotlinx.android.synthetic.main.activity_docs.*
-import android.widget.LinearLayout
 import com.graphitedocs.graphitedocs.utils.GraphiteActivity
 
 
@@ -23,23 +22,23 @@ class DocsActivity : GraphiteActivity() {
     var gestureDetector : GestureDetector? = null
     var isPreview : Boolean = true
 
-    var docText : String = ""
+    var docTextHTML = StringBuilder("")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_docs)
 
-        docText = loadText()
+        docTextHTML.append(loadText())
         editScrollView.visibility = View.GONE
         bottomDocsEditBar.visibility = View.GONE
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            previewTextView.text = Html.fromHtml(getString(R.string.test), Html.FROM_HTML_MODE_COMPACT)
-            docsEditText.setText(Html.fromHtml(docText, Html.FROM_HTML_MODE_COMPACT))
+            previewTextView.text = Html.fromHtml(docTextHTML.toString(), Html.FROM_HTML_MODE_COMPACT)
         } else {
-            previewTextView.text = Html.fromHtml(getString(R.string.test))
-            docsEditText.setText(Html.fromHtml(docText))
+            previewTextView.text = Html.fromHtml(docTextHTML.toString())
         }
+
+        updateEditText(0, 0)
 
         gestureDetector = GestureDetector(this, object : GestureDetector.OnGestureListener {
             override fun onShowPress(e: MotionEvent?) {
@@ -144,10 +143,9 @@ class DocsActivity : GraphiteActivity() {
             editDocsFab.hide()
         }
 
-        docsEditText.addTextChangedListener(object : TextWatcher{
+        docsEditText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                docText = s.toString()
-                saveText(docText)
+                saveText(docTextHTML.toString())
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -155,11 +153,79 @@ class DocsActivity : GraphiteActivity() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                // TODO: Need to replace chars one at a time since we need to know if tags are deleted
 
+                docTextHTML.replace(start, start + before, s.toString())
             }
 
         })
+
+        // ******* Text Editor Functions *******
+        // *************************************
+
+        boldButton.setOnClickListener {
+            val start = docsEditText.selectionStart
+            val end = docsEditText.selectionEnd
+
+            Log.d("Before Edit Docs", docTextHTML.toString())
+
+            handleHtmlTag(start, end, "<b>", "</b>")
+
+
+            Log.d("After Edit Docs", docTextHTML.toString())
+
+            updateEditText(start, end)
+        }
+
+        italicButton.setOnClickListener {
+            val start = docsEditText.selectionStart
+            val end = docsEditText.selectionEnd
+
+            handleHtmlTag(start, end, "<i>", "</i>")
+
+            updateEditText(start, end)
+        }
+
+        underlineButton.setOnClickListener {
+            val start = docsEditText.selectionStart
+            val end = docsEditText.selectionEnd
+
+            handleHtmlTag(start, end, "<u>", "</u>")
+
+            updateEditText(start, end)
+        }
+
     }
+
+    fun handleHtmlTag (start : Int, end : Int, startTag : String, endTag : String) {
+        if (docTextHTML.substring(Math.max(start - 3, 0), start) == startTag
+                && docTextHTML.substring(end, Math.min(end + 4, docTextHTML.length)) == endTag) {
+
+            Log.d("Edit Docs", docTextHTML.toString())
+
+            docTextHTML.delete(end, Math.min(end + 4, docTextHTML.length))
+            docTextHTML.delete(Math.max(start - 3, 0), start)
+
+            Log.d("Edit Docs", docTextHTML.toString())
+
+
+        } else if (docTextHTML.substring(Math.max(start - 3, 0), start) == startTag) {
+
+            docTextHTML.insert(end, startTag)
+            docTextHTML.delete(Math.max(start - 3, 0), start)
+
+        } else if (docTextHTML.substring(end, Math.min(end + 4, docTextHTML.length)) == endTag) {
+
+            docTextHTML.delete(end, Math.min(end + 4, docTextHTML.length))
+            docTextHTML.insert(start, endTag)
+
+        } else {
+            docTextHTML.insert(end, endTag)
+            docTextHTML.insert(start, startTag)
+        }
+    }
+
+
 
     fun saveText (text : String) {
         // Blockstack api save text
@@ -178,9 +244,17 @@ class DocsActivity : GraphiteActivity() {
         } else {
             // Change to preview mode
             isPreview = true
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                previewTextView.text = Html.fromHtml(docTextHTML.toString(), Html.FROM_HTML_MODE_COMPACT)
+            } else {
+                previewTextView.text = Html.fromHtml(docTextHTML.toString())
+            }
+
             editScrollView.visibility = View.GONE
             previewScrollView.visibility = View.VISIBLE
             bottomDocsEditBar.visibility = View.GONE
+
             editDocsFab.show()
         }
     }
@@ -190,5 +264,23 @@ class DocsActivity : GraphiteActivity() {
         return if (resourceId > 0) {
             resources.getDimensionPixelSize(resourceId)
         } else 0
+    }
+
+    fun updateEditText (selectionStart : Int, selectionEnd : Int) {
+        Log.d("Before Update Edit Text", docTextHTML.toString())
+
+        var printText = docTextHTML.toString()
+
+        Log.d("Print text", printText)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            docsEditText.setText(Html.fromHtml(printText, Html.FROM_HTML_MODE_COMPACT))
+        } else {
+            docsEditText.setText(Html.fromHtml(printText))
+        }
+
+        Log.d("After update Edit Text", docTextHTML.toString())
+        docsEditText.setSelection(selectionStart, selectionEnd)
+
     }
 }

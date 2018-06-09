@@ -9,7 +9,7 @@
     <string name="vault">Vault</string>
 
     <!--Documents Files-->
-    <string name="documents_list">documents.json</string>
+    <string name="documents_list">documentscollection.json</string>
 
     <string name="test">In my younger and more vulnerable years my father gave me some advice that I’ve been turning over in my mind ever since.
 

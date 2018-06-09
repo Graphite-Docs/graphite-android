@@ -22,7 +22,7 @@ open class GraphiteActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        //        val appDomain = URI("https://app.graphitedocs.com") //PROD
+//        val appDomain = URI("https://app.graphitedocs.com") //PROD
         val appDomain = URI("https://serene-hamilton-56e88e.netlify.com")
         val redirectURI = URI("${appDomain}/redirect.html")
         val manifestURI = URI("${appDomain}/manifest.json")

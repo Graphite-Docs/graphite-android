@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -68,7 +67,8 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_format_bold_32dp"
             android:tooltipText="@string/bold_tooltip"
-            style="?android:attr/borderlessButtonStyle" />
+            style="?android:attr/borderlessButtonStyle"
+            android:contentDescription="@string/bold_tooltip" />
 
         <ImageButton
             android:id="@+id/italicButton"
@@ -77,7 +77,8 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_format_italic_32dp"
             android:tooltipText="@string/italic_tooltip"
-            style="?android:attr/borderlessButtonStyle"/>
+            style="?android:attr/borderlessButtonStyle"
+            android:contentDescription="@string/italic_tooltip" />
 
         <ImageButton
             android:id="@+id/underlineButton"
@@ -86,7 +87,8 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_format_underlined_32dp"
             android:tooltipText="@string/underline_tooltip"
-            style="?android:attr/borderlessButtonStyle"/>
+            style="?android:attr/borderlessButtonStyle"
+            android:contentDescription="@string/underline_tooltip" />
 
         <ImageButton
             android:id="@+id/colorTextButton"
@@ -95,7 +97,8 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_format_color_text_32dp"
             android:tooltipText="@string/text_color_tooltip"
-            style="?android:attr/borderlessButtonStyle"/>
+            style="?android:attr/borderlessButtonStyle"
+            android:contentDescription="@string/text_color_tooltip" />
 
         <ImageButton
             android:id="@+id/numListButton"
@@ -104,7 +107,8 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_format_list_numbered_32dp"
             android:tooltipText="@string/number__tooltip"
-            style="?android:attr/borderlessButtonStyle"/>
+            style="?android:attr/borderlessButtonStyle"
+            android:contentDescription="@string/number__tooltip" />
 
         <ImageButton
             android:id="@+id/bulletListButton"
@@ -113,7 +117,8 @@
             android:layout_height="wrap_content"
             android:src="@drawable/ic_format_list_bulleted_32dp"
             android:tooltipText="@string/bullets_tooltip"
-            style="?android:attr/borderlessButtonStyle"/>
+            style="?android:attr/borderlessButtonStyle"
+            android:contentDescription="@string/bullets_tooltip" />
 
     </LinearLayout>
 
