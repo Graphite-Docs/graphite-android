@@ -1,10 +1,12 @@
 package com.graphitedocs.graphitedocs.docs
 
+import android.graphics.Typeface
 import android.os.Build
 import android.os.Bundle
-import android.text.Editable
-import android.text.Html
-import android.text.TextWatcher
+import android.text.*
+import android.text.style.StyleSpan
+import android.text.style.TypefaceSpan
+import android.text.style.UnderlineSpan
 import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
@@ -13,6 +15,7 @@ import android.view.ViewGroup
 import com.graphitedocs.graphitedocs.R
 import kotlinx.android.synthetic.main.activity_docs.*
 import com.graphitedocs.graphitedocs.utils.GraphiteActivity
+import java.util.*
 
 
 class DocsActivity : GraphiteActivity() {
@@ -22,21 +25,17 @@ class DocsActivity : GraphiteActivity() {
     var gestureDetector : GestureDetector? = null
     var isPreview : Boolean = true
 
-    var docTextHTML = StringBuilder("")
+    var docTextHTML : SpannableStringBuilder? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_docs)
 
-        docTextHTML.append(loadText())
         editScrollView.visibility = View.GONE
         bottomDocsEditBar.visibility = View.GONE
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            previewTextView.text = Html.fromHtml(docTextHTML.toString(), Html.FROM_HTML_MODE_COMPACT)
-        } else {
-            previewTextView.text = Html.fromHtml(docTextHTML.toString())
-        }
+        docTextHTML = SpannableStringBuilder(loadText())
+        previewTextView.text = docTextHTML
 
         updateEditText(0, 0)
 
@@ -145,7 +144,7 @@ class DocsActivity : GraphiteActivity() {
 
         docsEditText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                saveText(docTextHTML.toString())
+                saveText(Html.toHtml(docTextHTML)) // Convert back to html with tags
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -153,9 +152,7 @@ class DocsActivity : GraphiteActivity() {
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                // TODO: Need to replace chars one at a time since we need to know if tags are deleted
 
-                docTextHTML.replace(start, start + before, s.toString())
             }
 
         })
@@ -167,12 +164,7 @@ class DocsActivity : GraphiteActivity() {
             val start = docsEditText.selectionStart
             val end = docsEditText.selectionEnd
 
-            Log.d("Before Edit Docs", docTextHTML.toString())
-
-            handleHtmlTag(start, end, "<b>", "</b>")
-
-
-            Log.d("After Edit Docs", docTextHTML.toString())
+            handleHtmlTag(start, end, StyleSpan(Typeface.BOLD))
 
             updateEditText(start, end)
         }
@@ -181,7 +173,7 @@ class DocsActivity : GraphiteActivity() {
             val start = docsEditText.selectionStart
             val end = docsEditText.selectionEnd
 
-            handleHtmlTag(start, end, "<i>", "</i>")
+            handleHtmlTag(start, end, StyleSpan(Typeface.ITALIC))
 
             updateEditText(start, end)
         }
@@ -190,39 +182,41 @@ class DocsActivity : GraphiteActivity() {
             val start = docsEditText.selectionStart
             val end = docsEditText.selectionEnd
 
-            handleHtmlTag(start, end, "<u>", "</u>")
+            handleHtmlTag(start, end, UnderlineSpan())
 
             updateEditText(start, end)
         }
 
     }
 
-    fun handleHtmlTag (start : Int, end : Int, startTag : String, endTag : String) {
-        if (docTextHTML.substring(Math.max(start - 3, 0), start) == startTag
-                && docTextHTML.substring(end, Math.min(end + 4, docTextHTML.length)) == endTag) {
+    fun handleHtmlTag (start : Int, end : Int, styleSpan: Any) {
+        docTextHTML!!.setSpan(styleSpan, start, end, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+//        Log.d("Before HTML tag", docTextHTML.toString())
 
-            Log.d("Edit Docs", docTextHTML.toString())
+//        if (docTextHTML.substring(Math.max(start - 3, 0), start) == startTag
+//                && docTextHTML.substring(end, Math.min(end + 4, docTextHTML.length)) == endTag) {
+//
+//            docTextHTML.delete(end, Math.min(end + 4, docTextHTML.length))
+//            docTextHTML.delete(Math.max(start - 3, 0), start)
+//
+//
+//        } else if (docTextHTML.substring(Math.max(start - 3, 0), start) == startTag) {
+//
+//            docTextHTML.insert(end, startTag)
+//            docTextHTML.delete(Math.max(start - 3, 0), start)
+//
+//        } else if (docTextHTML.substring(end, Math.min(end + 4, docTextHTML.length)) == endTag) {
+//
+//            docTextHTML.delete(end, Math.min(end + 4, docTextHTML.length))
+//            docTextHTML.insert(start, endTag)
+//
+//        } else {
+//            docTextHTML.insert(end, endTag)
+//            docTextHTML.insert(start, startTag)
+//        }
 
-            docTextHTML.delete(end, Math.min(end + 4, docTextHTML.length))
-            docTextHTML.delete(Math.max(start - 3, 0), start)
+//        Log.d("After HTML tag", docTextHTML.toString())
 
-            Log.d("Edit Docs", docTextHTML.toString())
-
-
-        } else if (docTextHTML.substring(Math.max(start - 3, 0), start) == startTag) {
-
-            docTextHTML.insert(end, startTag)
-            docTextHTML.delete(Math.max(start - 3, 0), start)
-
-        } else if (docTextHTML.substring(end, Math.min(end + 4, docTextHTML.length)) == endTag) {
-
-            docTextHTML.delete(end, Math.min(end + 4, docTextHTML.length))
-            docTextHTML.insert(start, endTag)
-
-        } else {
-            docTextHTML.insert(end, endTag)
-            docTextHTML.insert(start, startTag)
-        }
     }
 
 
@@ -231,10 +225,13 @@ class DocsActivity : GraphiteActivity() {
         // Blockstack api save text
     }
 
-    fun loadText () : String {
+    fun loadText () : Spanned? {
         // Blockstack api get text from file
-
-        return getString(R.string.test)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            return Html.fromHtml(getString(R.string.test), Html.FROM_HTML_MODE_COMPACT)
+        } else {
+            return Html.fromHtml(getString(R.string.test))
+        }
     }
 
 
@@ -245,11 +242,7 @@ class DocsActivity : GraphiteActivity() {
             // Change to preview mode
             isPreview = true
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                previewTextView.text = Html.fromHtml(docTextHTML.toString(), Html.FROM_HTML_MODE_COMPACT)
-            } else {
-                previewTextView.text = Html.fromHtml(docTextHTML.toString())
-            }
+            previewTextView.text = docTextHTML
 
             editScrollView.visibility = View.GONE
             previewScrollView.visibility = View.VISIBLE
@@ -267,20 +260,7 @@ class DocsActivity : GraphiteActivity() {
     }
 
     fun updateEditText (selectionStart : Int, selectionEnd : Int) {
-        Log.d("Before Update Edit Text", docTextHTML.toString())
-
-        var printText = docTextHTML.toString()
-
-        Log.d("Print text", printText)
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            docsEditText.setText(Html.fromHtml(printText, Html.FROM_HTML_MODE_COMPACT))
-        } else {
-            docsEditText.setText(Html.fromHtml(printText))
-        }
-
-        Log.d("After update Edit Text", docTextHTML.toString())
+        docsEditText.text = docTextHTML
         docsEditText.setSelection(selectionStart, selectionEnd)
-
     }
 }
