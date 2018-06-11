@@ -5,17 +5,14 @@ import android.os.Build
 import android.os.Bundle
 import android.text.*
 import android.text.style.StyleSpan
-import android.text.style.TypefaceSpan
 import android.text.style.UnderlineSpan
-import android.util.Log
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import com.graphitedocs.graphitedocs.R
-import kotlinx.android.synthetic.main.activity_docs.*
 import com.graphitedocs.graphitedocs.utils.GraphiteActivity
-import java.util.*
+import kotlinx.android.synthetic.main.activity_docs.*
 
 
 class DocsActivity : GraphiteActivity() {
