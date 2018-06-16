@@ -194,30 +194,6 @@ class DocsActivity : GraphiteActivity() {
 
     fun handleHtmlTag (start : Int, end : Int, styleSpan: Any) {
         docTextHTML!!.setSpan(styleSpan, start, end, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
-
-//        if (docTextHTML.substring(Math.max(start - 3, 0), start) == startTag
-//                && docTextHTML.substring(end, Math.min(end + 4, docTextHTML.length)) == endTag) {
-//
-//            docTextHTML.delete(end, Math.min(end + 4, docTextHTML.length))
-//            docTextHTML.delete(Math.max(start - 3, 0), start)
-//
-//
-//        } else if (docTextHTML.substring(Math.max(start - 3, 0), start) == startTag) {
-//
-//            docTextHTML.insert(end, startTag)
-//            docTextHTML.delete(Math.max(start - 3, 0), start)
-//
-//        } else if (docTextHTML.substring(end, Math.min(end + 4, docTextHTML.length)) == endTag) {
-//
-//            docTextHTML.delete(end, Math.min(end + 4, docTextHTML.length))
-//            docTextHTML.insert(start, endTag)
-//
-//        } else {
-//            docTextHTML.insert(end, endTag)
-//            docTextHTML.insert(start, startTag)
-//        }
-
-
     }
 
 
