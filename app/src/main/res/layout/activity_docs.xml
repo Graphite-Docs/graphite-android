@@ -3,123 +3,155 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/mainLayout"
     tools:context=".docs.DocsActivity">
 
-    <ScrollView
-        android:id="@+id/editScrollView"
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/docsToolbarLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay">
 
-        <com.graphitedocs.graphitedocs.uiviews.GraphiteEditText
-            android:id="@+id/docsEditText"
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbarDocsActivity"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="40dp"
-            android:paddingBottom="60dp"
-            android:textColor="@color/colorPrimary"
-            android:gravity="top|left"
-            android:background="@android:color/transparent"/>
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay" >
 
-    </ScrollView>
+            <TextView
+                android:id="@+id/titleText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                android:textSize="20sp"
+                android:text="Dummy Title"/>
 
+        </android.support.v7.widget.Toolbar>
+    </android.support.design.widget.AppBarLayout>
 
-    <ScrollView
-        android:id="@+id/previewScrollView"
+    <RelativeLayout
+        android:layout_below="@+id/docsToolbarLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/previewTextView"
-            android:padding="40dp"
-            android:textSize="18sp"
-            android:breakStrategy="simple"
-            android:textColor="@color/colorPrimary"
+
+        <ScrollView
+            android:id="@+id/editScrollView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content">
 
-    </ScrollView>
+            <com.graphitedocs.graphitedocs.uiviews.GraphiteEditText
+                android:id="@+id/docsEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="40dp"
+                android:paddingBottom="60dp"
+                android:textColor="@color/colorPrimary"
+                android:gravity="top|left"
+                android:background="@android:color/transparent"/>
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/editDocsFab"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:layout_gravity="end|bottom"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:src="@drawable/ic_mode_edit_24dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="27dp" />
+        </ScrollView>
 
-    <LinearLayout
-        android:id="@+id/bottomDocsEditBar"
-        android:layout_width="match_parent"
-        android:layout_height="52dp"
-        android:orientation="horizontal"
-        android:layout_alignParentBottom="true"
-        android:gravity="center"
-        android:background="@drawable/bg_bottom_docs_edit_bar">
 
-        <ImageButton
-            android:id="@+id/boldButton"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_format_bold_32dp"
-            android:tooltipText="@string/bold_tooltip"
-            style="?android:attr/borderlessButtonStyle"
-            android:contentDescription="@string/bold_tooltip" />
+        <ScrollView
+            android:id="@+id/previewScrollView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-        <ImageButton
-            android:id="@+id/italicButton"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_format_italic_32dp"
-            android:tooltipText="@string/italic_tooltip"
-            style="?android:attr/borderlessButtonStyle"
-            android:contentDescription="@string/italic_tooltip" />
+            <TextView
+                android:id="@+id/previewTextView"
+                android:padding="40dp"
+                android:textSize="18sp"
+                android:breakStrategy="simple"
+                android:textColor="@color/colorPrimary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
-        <ImageButton
-            android:id="@+id/underlineButton"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_format_underlined_32dp"
-            android:tooltipText="@string/underline_tooltip"
-            style="?android:attr/borderlessButtonStyle"
-            android:contentDescription="@string/underline_tooltip" />
+        </ScrollView>
 
-        <ImageButton
-            android:id="@+id/colorTextButton"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_format_color_text_32dp"
-            android:tooltipText="@string/text_color_tooltip"
-            style="?android:attr/borderlessButtonStyle"
-            android:contentDescription="@string/text_color_tooltip" />
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/editDocsFab"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_gravity="end|bottom"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:src="@drawable/ic_mode_edit_24dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="27dp" />
 
-        <ImageButton
-            android:id="@+id/numListButton"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_format_list_numbered_32dp"
-            android:tooltipText="@string/number__tooltip"
-            style="?android:attr/borderlessButtonStyle"
-            android:contentDescription="@string/number__tooltip" />
+        <LinearLayout
+            android:id="@+id/bottomDocsEditBar"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:orientation="horizontal"
+            android:layout_alignParentBottom="true"
+            android:gravity="center"
+            android:background="@drawable/bg_bottom_docs_edit_bar">
 
-        <ImageButton
-            android:id="@+id/bulletListButton"
-            android:layout_weight="1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_format_list_bulleted_32dp"
-            android:tooltipText="@string/bullets_tooltip"
-            style="?android:attr/borderlessButtonStyle"
-            android:contentDescription="@string/bullets_tooltip" />
+            <ImageButton
+                android:id="@+id/boldButton"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_format_bold_32dp"
+                android:tooltipText="@string/bold_tooltip"
+                style="?android:attr/borderlessButtonStyle"
+                android:contentDescription="@string/bold_tooltip" />
 
-    </LinearLayout>
+            <ImageButton
+                android:id="@+id/italicButton"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_format_italic_32dp"
+                android:tooltipText="@string/italic_tooltip"
+                style="?android:attr/borderlessButtonStyle"
+                android:contentDescription="@string/italic_tooltip" />
+
+            <ImageButton
+                android:id="@+id/underlineButton"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_format_underlined_32dp"
+                android:tooltipText="@string/underline_tooltip"
+                style="?android:attr/borderlessButtonStyle"
+                android:contentDescription="@string/underline_tooltip" />
+
+            <ImageButton
+                android:id="@+id/colorTextButton"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_format_color_text_32dp"
+                android:tooltipText="@string/text_color_tooltip"
+                style="?android:attr/borderlessButtonStyle"
+                android:contentDescription="@string/text_color_tooltip" />
+
+            <ImageButton
+                android:id="@+id/numListButton"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_format_list_numbered_32dp"
+                android:tooltipText="@string/number__tooltip"
+                style="?android:attr/borderlessButtonStyle"
+                android:contentDescription="@string/number__tooltip" />
+
+            <ImageButton
+                android:id="@+id/bulletListButton"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_format_list_bulleted_32dp"
+                android:tooltipText="@string/bullets_tooltip"
+                style="?android:attr/borderlessButtonStyle"
+                android:contentDescription="@string/bullets_tooltip" />
+
+        </LinearLayout>
+    </RelativeLayout>
 
 </RelativeLayout>

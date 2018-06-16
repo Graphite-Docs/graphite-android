@@ -6,12 +6,10 @@ import android.os.Bundle
 import android.text.*
 import android.text.style.StyleSpan
 import android.text.style.UnderlineSpan
-import android.view.GestureDetector
-import android.view.MotionEvent
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import com.graphitedocs.graphitedocs.R
 import com.graphitedocs.graphitedocs.utils.GraphiteActivity
+import com.graphitedocs.graphitedocs.utils.UndoRedoHelper
 import kotlinx.android.synthetic.main.activity_docs.*
 
 
@@ -23,10 +21,15 @@ class DocsActivity : GraphiteActivity() {
     var isPreview : Boolean = true
 
     var docTextHTML : SpannableStringBuilder? = null
+    var undoRedoHelper : UndoRedoHelper? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_docs)
+        setSupportActionBar(toolbarDocsActivity)
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+
+        invalidateOptionsMenu()
 
         editScrollView.visibility = View.GONE
         bottomDocsEditBar.visibility = View.GONE
@@ -35,6 +38,8 @@ class DocsActivity : GraphiteActivity() {
         previewTextView.text = docTextHTML
 
         updateEditText(0, 0)
+
+        undoRedoHelper = UndoRedoHelper(docsEditText)
 
         gestureDetector = GestureDetector(this, object : GestureDetector.OnGestureListener {
             override fun onShowPress(e: MotionEvent?) {
@@ -137,6 +142,7 @@ class DocsActivity : GraphiteActivity() {
 
             previewScrollView.visibility = View.GONE
             editDocsFab.hide()
+            invalidateOptionsMenu()
         }
 
         docsEditText.addTextChangedListener(object : TextWatcher {
@@ -244,6 +250,7 @@ class DocsActivity : GraphiteActivity() {
             bottomDocsEditBar.visibility = View.GONE
 
             editDocsFab.show()
+            invalidateOptionsMenu()
         }
     }
 
@@ -257,5 +264,29 @@ class DocsActivity : GraphiteActivity() {
     fun updateEditText (selectionStart : Int, selectionEnd : Int) {
         docsEditText.text = docTextHTML
         docsEditText.setSelection(selectionStart, selectionEnd)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.top_toolbar_edit_docs, menu)
+
+        if (menu != null) {
+            for (i in 0 until menu.size())
+                menu.getItem(i).isVisible = !isPreview
+        }
+
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+
+        val id = item!!.itemId
+
+        if (id == R.id.action_undo) {
+            undoRedoHelper?.undo()
+        } else if (id == R.id.action_redo) {
+            undoRedoHelper?.redo()
+        }
+
+        return super.onOptionsItemSelected(item)
     }
 }

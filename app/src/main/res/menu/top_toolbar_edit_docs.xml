@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".docs.DocsActivity">
+
+    <item
+        android:id="@+id/action_undo"
+        android:orderInCategory="300"
+        android:title="Undo"
+        android:icon="@drawable/ic_undo_24dp"
+        app:showAsAction="ifRoom"></item>
+
+    <item
+        android:id="@+id/action_redo"
+        android:orderInCategory="400"
+        android:title="Redo"
+        android:icon="@drawable/ic_redo_24dp"
+        app:showAsAction="ifRoom"></item>
+
+</menu>
