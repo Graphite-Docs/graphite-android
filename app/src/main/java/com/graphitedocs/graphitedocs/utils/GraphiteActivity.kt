@@ -6,8 +6,7 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
-import org.blockstack.android.sdk.BlockstackSession
-import org.blockstack.android.sdk.UserData
+import org.blockstack.android.sdk.*
 import java.net.URI
 import android.util.DisplayMetrics
 
@@ -26,7 +25,7 @@ open class GraphiteActivity : AppCompatActivity() {
         val appDomain = URI("https://serene-hamilton-56e88e.netlify.com")
         val redirectURI = URI("${appDomain}/redirect.html")
         val manifestURI = URI("${appDomain}/manifest.json")
-        val scopes = arrayOf("store_write")
+        val scopes = arrayOf(Scope.StoreWrite)
 
         _blockstackSession = BlockstackSession(this, appDomain, redirectURI, manifestURI, scopes,
                 onLoadedCallback = {checkLogin()})
