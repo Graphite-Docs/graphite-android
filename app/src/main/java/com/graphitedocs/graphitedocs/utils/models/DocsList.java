@@ -8,14 +8,14 @@ import java.util.List;
 
 public class DocsList {
 
-    List<DocsListItem> docsList;
+    public List<DocsListItem> docsList;
 
     public DocsList() {
         docsList = new ArrayList<DocsListItem>();
     }
 
     public static DocsList parseJSON(String response) {
-        String DATE_FORMAT = "dd/MM/yyyy";
+        String DATE_FORMAT = "dd/MM/yyyyyyyy-MM-dd";
 
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.setDateFormat(DATE_FORMAT);

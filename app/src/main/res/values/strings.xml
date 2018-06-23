@@ -23,4 +23,5 @@ He didn’t say any more, but we’ve always been unusually communicative in a r
     <string name="text_color_tooltip">Text color</string>
     <string name="number__tooltip">Number</string>
     <string name="bullets_tooltip">Bullets</string>
+    <string name="empty_docs_text">You have no documents to show!</string>
 </resources>
