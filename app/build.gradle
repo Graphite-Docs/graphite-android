@@ -24,12 +24,6 @@ android {
         debug {
             matchingFallbacks = ['release']
         }
-//        debugAndroidTest {
-//            matchingFallbacks = ['release']
-//        }
-//        debugUnitTest {
-//            matchingFallbacks = ['release']
-//        }
     }
 }
 
@@ -49,6 +43,9 @@ dependencies {
     annotationProcessor 'com.google.dagger:dagger-compiler:2.16'
     implementation 'com.google.dagger:dagger-android:2.16'
     implementation 'com.google.dagger:dagger-android-support:2.16'
+
+    implementation 'com.google.code.gson:gson:2.8.5'
+
     // if you use the support libraries
     annotationProcessor 'com.google.dagger:dagger-android-processor:2.16'
 

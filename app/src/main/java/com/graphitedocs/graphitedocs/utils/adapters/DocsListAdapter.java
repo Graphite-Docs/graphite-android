@@ -37,8 +37,8 @@ public class DocsListAdapter extends RecyclerView.Adapter<DocsListAdapter.Holder
 
         holder.titleTextView.setText(item.getTitle());
 
-        if (item.getCollaborators() != null) {
-            holder.collaboratorsTextView.setText(join(item.getCollaborators()));
+        if (item.getSharedWith() != null) {
+            holder.collaboratorsTextView.setText(join(item.getSharedWith()));
         }
 
 
