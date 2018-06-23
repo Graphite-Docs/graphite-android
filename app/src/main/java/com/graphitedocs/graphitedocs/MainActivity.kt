@@ -33,6 +33,10 @@ class MainActivity : GraphiteActivity() {
 
     }
 
+    override fun onLoaded() {
+        Log.d(TAG, "Blockstack loaded.")
+    }
+
     override fun onSignIn(userData: UserData) {
         super.onSignIn(userData)
         val intent = Intent(this, SelectAppActivity::class.java)

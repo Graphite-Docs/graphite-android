@@ -21,9 +21,7 @@ class DocsListActivity : GraphiteActivity() {
         setContentView(R.layout.activity_docs_main)
     }
 
-    override fun onSignIn(userData: UserData) {
-        super.onSignIn(userData)
-
+    override fun onLoaded() {
         rvDocs.layoutManager = LinearLayoutManager(this)
         // Get data
 

@@ -28,7 +28,10 @@ open class GraphiteActivity : AppCompatActivity() {
         val scopes = arrayOf(Scope.StoreWrite)
 
         _blockstackSession = BlockstackSession(this, appDomain, redirectURI, manifestURI, scopes,
-                onLoadedCallback = {checkLogin()})
+                onLoadedCallback = {
+                    checkLogin()
+                    onLoaded()
+                })
     }
 
     private fun checkLogin() {
@@ -45,6 +48,10 @@ open class GraphiteActivity : AppCompatActivity() {
         })
     }
 
+    open fun onLoaded() {
+        throw IllegalStateException("Please override this function.")
+    }
+
     override fun onResume() {
         super.onResume()
         if (_blockstackSession?.loaded == true) {
@@ -58,7 +65,7 @@ open class GraphiteActivity : AppCompatActivity() {
         _userData = userData
         Log.d(TAG, "signed in!")
         Log.d(TAG, userData.json.toString())
-        Toast.makeText(this, "Signed in as ${userData.json.getJSONObject("profile").getString("name")}", Toast.LENGTH_LONG).show();
+//        Toast.makeText(this, "Signed in as ${userData.json.getJSONObject("profile").getString("name")}", Toast.LENGTH_LONG).show();
     }
 
     override fun onNewIntent(intent: Intent?) {
