@@ -9,6 +9,7 @@ import com.graphitedocs.graphitedocs.utils.adapters.DocsListAdapter
 import com.graphitedocs.graphitedocs.utils.adapters.RecyclerSectionItemDecoration
 import com.graphitedocs.graphitedocs.utils.models.DocsListItem
 import kotlinx.android.synthetic.main.activity_docs_main.*
+import org.blockstack.android.sdk.GetFileOptions
 
 class DocsListActivity : GraphiteActivity() {
 
@@ -21,6 +22,9 @@ class DocsListActivity : GraphiteActivity() {
 
         rvDocs.layoutManager = LinearLayoutManager(this)
         getData()
+    }
+
+    override fun onLoaded() {
         // Get data
         rvDocs.adapter = DocsListAdapter(this, getData())
 
@@ -30,16 +34,16 @@ class DocsListActivity : GraphiteActivity() {
 
     private fun getData () : ArrayList<DocsListItem> {
 
-//        val options = GetFileOptions()
-//
-//        val fileName = getString(R.string.documents_list)
-//
-//        blockstackSession().getFile(fileName, options, {content: Any ->
-//            // content can be a `String` or a `ByteArray`
-//            Log.d(TAG, content.toString())
-//
-//            // do something with `content`
-//        })
+        val options = GetFileOptions()
+
+        val fileName = getString(R.string.documents_list)
+
+        blockstackSession().getFile(fileName, options, {content: Any ->
+            // content can be a `String` or a `ByteArray`
+            //Log.d(TAG, content.toString())
+
+            // do something with `content`
+        })
 
         // Create mock data for now
         var doc1 = DocsListItem("Daniel's Story", "May 9, 2018", listOf("danielwang.id"), listOf(""))

@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.widget.Toast
 import org.blockstack.android.sdk.BlockstackSession
+import org.blockstack.android.sdk.Scope
 import org.blockstack.android.sdk.UserData
 import java.net.URI
 
@@ -22,10 +23,13 @@ open class GraphiteActivity : AppCompatActivity() {
         val appDomain = URI("https://serene-hamilton-56e88e.netlify.com")
         val redirectURI = URI("${appDomain}/redirect.html")
         val manifestURI = URI("${appDomain}/manifest.json")
-        val scopes = arrayOf("store_write")
+        val scopes = arrayOf(Scope.StoreWrite)
 
         _blockstackSession = BlockstackSession(this, appDomain, redirectURI, manifestURI, scopes,
-                onLoadedCallback = {checkLogin()})
+                onLoadedCallback = {
+                    checkLogin()
+                    onLoaded()
+                })
     }
 
     private fun checkLogin() {
@@ -42,6 +46,11 @@ open class GraphiteActivity : AppCompatActivity() {
         })
     }
 
+    // only do file operations after this method has been called
+    open fun onLoaded() {
+        throw IllegalStateException("Please override this function.")
+    }
+
     override fun onResume() {
         super.onResume()
         if (_blockstackSession?.loaded == true) {
@@ -55,7 +64,7 @@ open class GraphiteActivity : AppCompatActivity() {
         _userData = userData
         Log.d(TAG, "signed in!")
         Log.d(TAG, userData.json.toString())
-        Toast.makeText(this, "Signed in as ${userData.json.getJSONObject("profile").getString("name")}", Toast.LENGTH_LONG).show();
+       // Toast.makeText(this, "Signed in as ${userData.json.getJSONObject("profile").getString("name")}", Toast.LENGTH_LONG).show();
     }
 
     override fun onNewIntent(intent: Intent?) {
