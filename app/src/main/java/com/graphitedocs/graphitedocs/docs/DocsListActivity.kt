@@ -10,7 +10,7 @@ import com.graphitedocs.graphitedocs.utils.adapters.DocsListAdapter
 import com.graphitedocs.graphitedocs.utils.adapters.RecyclerSectionItemDecoration
 import com.graphitedocs.graphitedocs.utils.models.DocsList
 import com.graphitedocs.graphitedocs.utils.models.DocsListItem
-import kotlinx.android.synthetic.main.activity_docs_main.*
+import kotlinx.android.synthetic.main.activity_docs_list.*
 import org.blockstack.android.sdk.GetFileOptions
 
 class DocsListActivity : GraphiteActivity() {
@@ -19,7 +19,7 @@ class DocsListActivity : GraphiteActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_docs_main)
+        setContentView(R.layout.activity_docs_list)
     }
 
     override fun onLoaded() {
@@ -62,7 +62,7 @@ class DocsListActivity : GraphiteActivity() {
 //        var doc1 = DocsListItem("Daniel's Story", "May 9, 2018", listOf("danielwang.id"), listOf(""), "danielwang.id", 123, "06/12/2018", "")
 //        var doc2 = DocsListItem("Justin's Story", "April 1, 2018", listOf("justinhunter.id"), listOf("Story"), "danielwang.id", 123, "06/12/2018", "")
 //        var doc3 = DocsListItem("The Great Gatsby", "March 22, 2018", listOf("graphitetest.id"), listOf("A long story"), "danielwang.id", 123, "06/12/2018", "")
-//        var arrayList = arrayListOf(doc1, doc1, doc1, doc1, doc1, doc2, doc2, doc2, doc3, doc3, doc3, doc3, doc3)
+//        arrayList = arrayListOf(doc1, doc1, doc1, doc1, doc1, doc2, doc2, doc2, doc3, doc3, doc3, doc3, doc3)
 
         return arrayList
     }

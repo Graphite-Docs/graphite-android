@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".docs.DocsListActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -27,7 +27,23 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_main" />
+    <TextView
+        android:id="@+id/emptyDocsListTextView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="@string/empty_docs_text"
+        android:gravity="center"
+        android:textSize="18sp"
+        android:visibility="gone"/>
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rvDocs"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="true"
+        android:saveEnabled="false"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
 
 </android.support.design.widget.CoordinatorLayout>
