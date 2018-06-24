@@ -33,7 +33,7 @@ public class DocsListAdapter extends RecyclerView.Adapter<DocsListAdapter.Holder
 
     @Override
     public void onBindViewHolder(Holder holder, int position) {
-        DocsListItem item = mArrayList.get(position);
+        final DocsListItem item = mArrayList.get(position);
 
         holder.titleTextView.setText(item.getTitle());
 
@@ -49,8 +49,7 @@ public class DocsListAdapter extends RecyclerView.Adapter<DocsListAdapter.Holder
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent newIntent = new Intent(mContext, DocsActivity.class);
-                mContext.startActivity(newIntent);
+                mContext.startActivity(DocsActivity.Companion.newIntent(mContext, item.getTitle(), item.getId()));
             }
         });
 

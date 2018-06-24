@@ -16,6 +16,7 @@ import org.blockstack.android.sdk.GetFileOptions
 import org.blockstack.android.sdk.PutFileOptions
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 class DocsListActivity : GraphiteActivity() {
 
@@ -37,18 +38,28 @@ class DocsListActivity : GraphiteActivity() {
                 // content can be a `String` or a `ByteArray`
                 Log.d(TAG, content.toString())
 
-                val date = SimpleDateFormat("MM/dd/yyyy").format(Date())
-                val newDoc = DocsListItem("Untitled", date, ArrayList(), ArrayList(), userData().json["username"].toString(), Date().time, date, date)
-                val arrayList = DocsList.parseJSON(content.toString()).docsList.add(newDoc)
-                val putOptions = PutFileOptions()
-
-                blockstackSession().putFile(fileName, Gson().toJson(arrayList), putOptions, {readURL: String ->
-
-                    runOnUiThread {
-                        // Start new Activity with this doc
-
+                runOnUiThread {
+                    val date = SimpleDateFormat("MM/dd/yyyy").format(Date())
+                    val id =  Date().time
+                    val newDoc = DocsListItem("Untitled", date, ArrayList(), ArrayList(), userData().json["username"].toString(), id, date, date)
+                    var arrayList = DocsList.parseJSON(content.toString()).docsList
+                    if (arrayList == null) {
+                        arrayList = java.util.ArrayList()
                     }
-                })
+                    arrayList.add(newDoc)
+
+                    val putOptions = PutFileOptions()
+
+                    val json = Gson().toJson(arrayList)
+
+                    blockstackSession().putFile(fileName, json, putOptions, {readURL: String ->
+
+                        runOnUiThread {
+                            // Start new Activity with this doc
+                            startActivity(DocsActivity.newIntent(baseContext, "Untitled", id))
+                        }
+                    })
+                }
             })
         }
 

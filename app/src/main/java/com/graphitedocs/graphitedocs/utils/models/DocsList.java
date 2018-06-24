@@ -11,7 +11,7 @@ public class DocsList {
     public List<DocsListItem> docsList;
 
     public DocsList() {
-        docsList = new ArrayList<DocsListItem>();
+        docsList = new ArrayList<>();
     }
 
     public static DocsList parseJSON(String response) {
@@ -22,6 +22,10 @@ public class DocsList {
         Gson gson = gsonBuilder.create();
 
         DocsList docsListResponse = gson.fromJson(response, DocsList.class);
+
+        if (docsListResponse == null) {
+            docsListResponse = new DocsList();
+        }
         return docsListResponse;
     }
 }
