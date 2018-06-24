@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.View
+import com.google.gson.Gson
 import com.graphitedocs.graphitedocs.R
 import com.graphitedocs.graphitedocs.utils.GraphiteActivity
 import com.graphitedocs.graphitedocs.utils.adapters.DocsListAdapter
@@ -12,6 +13,9 @@ import com.graphitedocs.graphitedocs.utils.models.DocsList
 import com.graphitedocs.graphitedocs.utils.models.DocsListItem
 import kotlinx.android.synthetic.main.activity_docs_list.*
 import org.blockstack.android.sdk.GetFileOptions
+import org.blockstack.android.sdk.PutFileOptions
+import java.text.SimpleDateFormat
+import java.util.*
 
 class DocsListActivity : GraphiteActivity() {
 
@@ -24,7 +28,29 @@ class DocsListActivity : GraphiteActivity() {
 
     override fun onLoaded() {
         rvDocs.layoutManager = LinearLayoutManager(this)
-        // Get data
+
+        newDocFab.setOnClickListener {
+            val getOptions = GetFileOptions()
+            val fileName = getString(R.string.documents_list)
+
+            blockstackSession().getFile(fileName, getOptions, {content: Any ->
+                // content can be a `String` or a `ByteArray`
+                Log.d(TAG, content.toString())
+
+                val date = SimpleDateFormat("MM/dd/yyyy").format(Date())
+                val newDoc = DocsListItem("Untitled", date, ArrayList(), ArrayList(), userData().json["username"].toString(), Date().time, date, date)
+                val arrayList = DocsList.parseJSON(content.toString()).docsList.add(newDoc)
+                val putOptions = PutFileOptions()
+
+                blockstackSession().putFile(fileName, Gson().toJson(arrayList), putOptions, {readURL: String ->
+
+                    runOnUiThread {
+                        // Start new Activity with this doc
+
+                    }
+                })
+            })
+        }
 
         val docsList = getData()
 

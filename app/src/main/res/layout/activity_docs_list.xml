@@ -36,6 +36,17 @@
         android:textSize="18sp"
         android:visibility="gone"/>
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/newDocFab"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_gravity="end|bottom"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/ic_add_24dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginBottom="27dp" />
+
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rvDocs"
@@ -44,6 +55,5 @@
         android:clipToPadding="true"
         android:saveEnabled="false"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
-
 
 </android.support.design.widget.CoordinatorLayout>

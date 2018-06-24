@@ -15,7 +15,7 @@ public class DocsList {
     }
 
     public static DocsList parseJSON(String response) {
-        String DATE_FORMAT = "dd/MM/yyyyyyyy-MM-dd";
+        String DATE_FORMAT = "MM/dd/yyyy";
 
         GsonBuilder gsonBuilder = new GsonBuilder();
         gsonBuilder.setDateFormat(DATE_FORMAT);
