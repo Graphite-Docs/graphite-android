@@ -50,15 +50,16 @@ class DocsListActivity : GraphiteActivity() {
                     }
                     arrayList.add(newDoc)
 
-                    val putOptions = PutFileOptions()
+                    sortArrayByDate(arrayList)
 
+                    val putOptions = PutFileOptions()
                     val json = Gson().toJson(arrayList)
 
                     blockstackSession().putFile(fileName, json, putOptions, {readURL: String ->
 
                         runOnUiThread {
                             // Start new Activity with this doc
-                            startActivity(DocsActivity.newIntent(baseContext, "Untitled", id))
+                            startActivity(DocsActivity.newIntent(baseContext, "Untitled", id, date))
                         }
                     })
                 }
@@ -90,7 +91,7 @@ class DocsListActivity : GraphiteActivity() {
                     emptyDocsListTextView.visibility = View.GONE
                     rvDocs.visibility = View.VISIBLE
 
-                    // Sort array by most recent dates
+                    sortArrayByDate(arrayList)
 
                     rvDocs.adapter = DocsListAdapter(this, arrayList)
 
@@ -117,6 +118,15 @@ class DocsListActivity : GraphiteActivity() {
         val arr = gson.fromJson(response, Array<DocsListItem>::class.java)
 
         return arr.toCollection(ArrayList())
+    }
+
+    private fun sortArrayByDate(arrayList: ArrayList<DocsListItem>) {
+
+        arrayList.sortWith(kotlin.Comparator { o1, o2 ->
+            var a = o1.date.substring(o1.date.length - 4) + o1.date
+            var b = o2.date.substring(o2.date.length - 4) + o2.date
+            return@Comparator if (a > b) -1 else if (a < b) 1 else 0;
+        })
     }
 
     private fun convertToDate(date : String) : String {

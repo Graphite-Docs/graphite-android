@@ -3,7 +3,6 @@ package com.graphitedocs.graphitedocs.docs
 import android.content.Context
 import android.content.Intent
 import android.graphics.Typeface
-import android.os.Build
 import android.os.Bundle
 import android.text.*
 import android.text.style.StyleSpan
@@ -33,12 +32,13 @@ class DocsActivity : GraphiteActivity() {
 
 
     companion object {
-        fun newIntent (mContext : Context, title : String, id : Long) : Intent {
+        fun newIntent (mContext : Context, title : String, id : Long, date : String) : Intent {
             val intent = Intent(mContext, DocsActivity::class.java)
 
             val bundle = Bundle()
             bundle.putString("title", title)
             bundle.putLong("id", id)
+            bundle.putString("date", date)
 
             intent.putExtras(bundle)
 
