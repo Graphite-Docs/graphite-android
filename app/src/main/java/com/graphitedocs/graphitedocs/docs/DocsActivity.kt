@@ -1,5 +1,7 @@
 package com.graphitedocs.graphitedocs.docs
 
+import android.content.Context
+import android.content.Intent
 import android.graphics.Typeface
 import android.os.Build
 import android.os.Bundle
@@ -7,10 +9,14 @@ import android.text.*
 import android.text.style.StyleSpan
 import android.text.style.UnderlineSpan
 import android.view.*
+import com.google.gson.Gson
 import com.graphitedocs.graphitedocs.R
 import com.graphitedocs.graphitedocs.utils.GraphiteActivity
 import com.graphitedocs.graphitedocs.utils.UndoRedoHelper
+import com.graphitedocs.graphitedocs.utils.models.SingleDoc
 import kotlinx.android.synthetic.main.activity_docs.*
+import org.blockstack.android.sdk.GetFileOptions
+import org.blockstack.android.sdk.PutFileOptions
 
 
 class DocsActivity : GraphiteActivity() {
@@ -20,8 +26,25 @@ class DocsActivity : GraphiteActivity() {
     var gestureDetector : GestureDetector? = null
     var isPreview : Boolean = true
 
-    var docTextHTML : SpannableStringBuilder? = null
     var undoRedoHelper : UndoRedoHelper? = null
+
+    var singleDoc : SingleDoc? = null
+    var docTextHTML : SpannableStringBuilder? = null
+
+
+    companion object {
+        fun newIntent (mContext : Context, title : String, id : Long) : Intent {
+            val intent = Intent(mContext, DocsActivity::class.java)
+
+            val bundle = Bundle()
+            bundle.putString("title", title)
+            bundle.putLong("id", id)
+
+            intent.putExtras(bundle)
+
+            return intent
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,11 +56,6 @@ class DocsActivity : GraphiteActivity() {
 
         editScrollView.visibility = View.GONE
         bottomDocsEditBar.visibility = View.GONE
-
-        docTextHTML = SpannableStringBuilder(loadText())
-        previewTextView.text = docTextHTML
-
-        updateEditText(0, 0)
 
         undoRedoHelper = UndoRedoHelper(docsEditText)
 
@@ -147,7 +165,7 @@ class DocsActivity : GraphiteActivity() {
 
         docsEditText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                saveText(Html.toHtml(docTextHTML)) // Convert back to html with tags
+                saveDoc(Html.toHtml(docTextHTML)) // Convert back to html with tags
             }
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
@@ -196,19 +214,44 @@ class DocsActivity : GraphiteActivity() {
         docTextHTML!!.setSpan(styleSpan, start, end, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
     }
 
-
-
-    fun saveText (text : String) {
-        // Blockstack api save text
+    override fun onLoaded() {
+        loadDoc()
     }
 
-    fun loadText () : Spanned? {
+    fun saveDoc (text : String) {
+        // Blockstack api save text
+        val putOptions = PutFileOptions()
+        val fileName = "/documents/" + intent.getLongExtra("id", 0) + ".json"
+
+        singleDoc!!.content = Html.toHtml(docTextHTML)
+        val json = Gson().toJson(singleDoc)
+
+        blockstackSession().putFile(fileName, json, putOptions, { readURL: String ->
+
+            runOnUiThread {
+                // Doc saved
+            }
+        })
+
+    }
+
+    fun loadDoc () {
         // Blockstack api get text from file
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            return Html.fromHtml(getString(R.string.test), Html.FROM_HTML_MODE_COMPACT)
-        } else {
-            return Html.fromHtml(getString(R.string.test))
-        }
+
+        val options = GetFileOptions()
+        val filename = "/documents/" + intent.getLongExtra("id", 0) + ".json"
+
+        blockstackSession().getFile(filename, options, {content: Any ->
+
+            runOnUiThread {
+                singleDoc = SingleDoc.parseJSON(content.toString())
+
+                docTextHTML = SpannableStringBuilder(singleDoc!!.content)
+                previewTextView.text = docTextHTML
+
+                updateEditText(0, 0)
+            }
+        })
     }
 
 

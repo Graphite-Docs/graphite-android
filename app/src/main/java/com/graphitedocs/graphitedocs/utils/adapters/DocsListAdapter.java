@@ -38,7 +38,8 @@ public class DocsListAdapter extends RecyclerView.Adapter<DocsListAdapter.Holder
         holder.titleTextView.setText(item.getTitle());
 
         if (item.getSharedWith() != null) {
-            holder.collaboratorsTextView.setText(join(item.getSharedWith()));
+            String collaborators = item.getAuthor() + join(item.getSharedWith());
+            holder.collaboratorsTextView.setText(collaborators);
         }
 
 
@@ -59,8 +60,8 @@ public class DocsListAdapter extends RecyclerView.Adapter<DocsListAdapter.Holder
         StringBuilder text = new StringBuilder();
 
         for (int i = 0; i < list.size(); i++) {
+            text.append(", ");
             text.append(list.get(i));
-            if (i != list.size() - 1) text.append(", ");
         }
         return text.toString();
     }
