@@ -119,14 +119,21 @@ class DocsListActivity : GraphiteActivity() {
         return arr.toCollection(ArrayList())
     }
 
+    private fun convertToDate(date : String) : String {
+        val inputFormat = SimpleDateFormat("MM/dd/yyyy")
+        val outputFormat = SimpleDateFormat("MMMM dd, yyyy")
+        val dateFormat = inputFormat.parse(date)
+        return outputFormat.format(dateFormat)
+    }
+
     private fun getSectionCallback (list : List<DocsListItem> ) : RecyclerSectionItemDecoration.SectionCallback {
         return object : RecyclerSectionItemDecoration.SectionCallback {
             override fun isSection(position: Int): Boolean {
-                return position == 0 || list[position].date != list[position - 1].date
+                return position == 0 || convertToDate(list[position].date) != convertToDate(list[position - 1].date)
             }
 
             override fun getSectionHeader(position: Int): CharSequence {
-                return list[position].date
+                return convertToDate(list[position].date)
             }
         }
     }
