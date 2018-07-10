@@ -43,11 +43,8 @@ class DocsListActivity : GraphiteActivity() {
                     val date = SimpleDateFormat("MM/dd/yyyy").format(Date())
                     val id =  Date().time
                     val newDoc = DocsListItem("Untitled", date, ArrayList(), ArrayList(), userData().json["username"].toString(), id, date, date)
-                    var arrayList = parseToArray(content.toString())
+                    val arrayList = parseToArray(content.toString())
 
-                    if (arrayList == null) {
-                        arrayList = java.util.ArrayList()
-                    }
                     arrayList.add(newDoc)
                     sortArrayByDate(arrayList)
 
