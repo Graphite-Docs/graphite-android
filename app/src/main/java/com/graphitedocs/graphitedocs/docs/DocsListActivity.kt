@@ -27,7 +27,6 @@ class DocsListActivity : GraphiteActivity() {
         setContentView(R.layout.activity_docs_list)
 
         rvDocs.layoutManager = LinearLayoutManager(this)
-
     }
 
     override fun onLoaded() {
@@ -45,11 +44,11 @@ class DocsListActivity : GraphiteActivity() {
                     val id =  Date().time
                     val newDoc = DocsListItem("Untitled", date, ArrayList(), ArrayList(), userData().json["username"].toString(), id, date, date)
                     var arrayList = parseToArray(content.toString())
+
                     if (arrayList == null) {
                         arrayList = java.util.ArrayList()
                     }
                     arrayList.add(newDoc)
-
                     sortArrayByDate(arrayList)
 
                     val putOptions = PutFileOptions()
@@ -72,9 +71,7 @@ class DocsListActivity : GraphiteActivity() {
     private fun loadData () {
 
         val options = GetFileOptions()
-
         val fileName = getString(R.string.documents_list)
-
         var arrayList : ArrayList<DocsListItem> = ArrayList()
 
         blockstackSession().getFile(fileName, options, {content: Any ->
@@ -100,21 +97,15 @@ class DocsListActivity : GraphiteActivity() {
                 }
             }
         })
-
-//        Mock data
-//        var doc1 = DocsListItem("Daniel's Story", "May 9, 2018", listOf("danielwang.id"), listOf(""), "danielwang.id", 123, "06/12/2018", "")
-//        var doc2 = DocsListItem("Justin's Story", "April 1, 2018", listOf("justinhunter.id"), listOf("Story"), "danielwang.id", 123, "06/12/2018", "")
-//        var doc3 = DocsListItem("The Great Gatsby", "March 22, 2018", listOf("graphitetest.id"), listOf("A long story"), "danielwang.id", 123, "06/12/2018", "")
-//        arrayList = arrayListOf(doc1, doc1, doc1, doc1, doc1, doc2, doc2, doc2, doc3, doc3, doc3, doc3, doc3)
     }
 
     private fun parseToArray(response : String) :  ArrayList<DocsListItem> {
         val DATE_FORMAT = "MM/dd/yyyy"
-
         val gsonBuilder = GsonBuilder()
-        gsonBuilder.setDateFormat(DATE_FORMAT)
-        val gson = gsonBuilder.create()
 
+        gsonBuilder.setDateFormat(DATE_FORMAT)
+
+        val gson = gsonBuilder.create()
         val arr = gson.fromJson(response, Array<DocsListItem>::class.java)
 
         return arr.toCollection(ArrayList())
@@ -123,8 +114,8 @@ class DocsListActivity : GraphiteActivity() {
     private fun sortArrayByDate(arrayList: ArrayList<DocsListItem>) {
 
         arrayList.sortWith(kotlin.Comparator { o1, o2 ->
-            var a = o1.date.substring(o1.date.length - 4) + o1.date
-            var b = o2.date.substring(o2.date.length - 4) + o2.date
+            val a = o1.date.substring(o1.date.length - 4) + o1.date
+            val b = o2.date.substring(o2.date.length - 4) + o2.date
             return@Comparator if (a > b) -1 else if (a < b) 1 else 0;
         })
     }
