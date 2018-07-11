@@ -33,7 +33,7 @@ class DocsActivity : GraphiteActivity() {
     private var undoRedoHelper : UndoRedoHelper? = null
 
     private var singleDoc : SingleDoc? = null
-    private var docTextHTML : SpannableStringBuilder? = null
+    private var docTextSpannable : SpannableStringBuilder? = null
 
     private val TAG = DocsActivity::class.java.simpleName
     private var subject: PublishSubject<Editable>? = null
@@ -218,7 +218,7 @@ class DocsActivity : GraphiteActivity() {
     }
 
     private fun handleHtmlTag (start : Int, end : Int, styleSpan: Any) {
-        docTextHTML!!.setSpan(styleSpan, start, end, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+        docTextSpannable!!.setSpan(styleSpan, start, end, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
     }
 
     override fun onLoaded() {
@@ -229,7 +229,7 @@ class DocsActivity : GraphiteActivity() {
         val putOptions = PutFileOptions()
         val fileName = "/documents/" + intent.getLongExtra("id", 0) + ".json"
 
-        docTextHTML = SpannableStringBuilder(text)
+        docTextSpannable = SpannableStringBuilder(getHtml(text))
         singleDoc!!.content = text.replace("\"", "\\\"")
 
         val json = Gson().toJson(singleDoc)
@@ -261,8 +261,8 @@ class DocsActivity : GraphiteActivity() {
                 }
 
                 titleText.text = singleDoc!!.title
-                docTextHTML = SpannableStringBuilder(singleDoc!!.content)
-                previewTextView.text = getHtml(docTextHTML)
+                docTextSpannable = SpannableStringBuilder(getHtml(singleDoc!!.content))
+                previewTextView.text = docTextSpannable
 
                 updateEditText(0, 0)
             }
@@ -277,7 +277,7 @@ class DocsActivity : GraphiteActivity() {
             // Change to preview mode
             isPreview = true
 
-            previewTextView.text = getHtml(docTextHTML)
+            previewTextView.text = docTextSpannable
 
             editScrollView.visibility = View.GONE
             previewScrollView.visibility = View.VISIBLE
@@ -296,15 +296,15 @@ class DocsActivity : GraphiteActivity() {
     }
 
     private fun updateEditText (selectionStart : Int, selectionEnd : Int) {
-        docsEditText.setText(getHtml(docTextHTML))
+        docsEditText.text = docTextSpannable
         docsEditText.setSelection(selectionStart, selectionEnd)
     }
 
-    private fun getHtml(text : SpannableStringBuilder?) : Spanned {
+    private fun getHtml(text : String?) : Spanned {
         return if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-            Html.fromHtml(text.toString(), Html.FROM_HTML_MODE_LEGACY)
+            Html.fromHtml(text, Html.FROM_HTML_MODE_LEGACY)
         } else {
-            Html.fromHtml(text.toString())
+            Html.fromHtml(text)
         }
     }
 
