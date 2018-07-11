@@ -7,29 +7,36 @@ import android.os.Bundle
 import android.text.*
 import android.text.style.StyleSpan
 import android.text.style.UnderlineSpan
+import android.util.Log
 import android.view.*
 import com.google.gson.Gson
 import com.graphitedocs.graphitedocs.R
 import com.graphitedocs.graphitedocs.utils.GraphiteActivity
 import com.graphitedocs.graphitedocs.utils.UndoRedoHelper
 import com.graphitedocs.graphitedocs.utils.models.SingleDoc
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.activity_docs.*
 import org.blockstack.android.sdk.GetFileOptions
 import org.blockstack.android.sdk.PutFileOptions
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 
 class DocsActivity : GraphiteActivity() {
 
-    val FAB_MARGIN = 16f
+    private val FAB_MARGIN = 16f
 
-    var gestureDetector : GestureDetector? = null
-    var isPreview : Boolean = true
+    private var gestureDetector : GestureDetector? = null
+    private var isPreview : Boolean = true
 
-    var undoRedoHelper : UndoRedoHelper? = null
+    private var undoRedoHelper : UndoRedoHelper? = null
 
-    var singleDoc : SingleDoc? = null
-    var docTextHTML : SpannableStringBuilder? = null
+    private var singleDoc : SingleDoc? = null
+    private var docTextHTML : SpannableStringBuilder? = null
+
+    private val TAG = DocsActivity::class.java.simpleName
+    private var subject: PublishSubject<Editable>? = null
 
 
     companion object {
@@ -57,6 +64,13 @@ class DocsActivity : GraphiteActivity() {
 
         editScrollView.visibility = View.GONE
         bottomDocsEditBar.visibility = View.GONE
+
+        subject = PublishSubject.create<Editable>()
+        (subject as PublishSubject<Editable>).throttleLast(100, TimeUnit.MILLISECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({
+                    text -> saveDoc(Html.toHtml(text))
+                })
 
         undoRedoHelper = UndoRedoHelper(docsEditText)
 
@@ -140,8 +154,7 @@ class DocsActivity : GraphiteActivity() {
                 return false
             }
 
-            override fun onLongPress(e: MotionEvent?) {
-            }
+            override fun onLongPress(e: MotionEvent?) {}
 
         })
 
@@ -166,17 +179,13 @@ class DocsActivity : GraphiteActivity() {
 
         docsEditText.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
-                saveDoc(Html.toHtml(docTextHTML)) // Convert back to html with tags
+                if (s != null) {
+                    subject!!.onNext(s)
+                }
             }
 
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-
-            }
-
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
 
         // ******* Text Editor Functions *******
@@ -187,7 +196,6 @@ class DocsActivity : GraphiteActivity() {
             val end = docsEditText.selectionEnd
 
             handleHtmlTag(start, end, StyleSpan(Typeface.BOLD))
-
             updateEditText(start, end)
         }
 
@@ -196,7 +204,6 @@ class DocsActivity : GraphiteActivity() {
             val end = docsEditText.selectionEnd
 
             handleHtmlTag(start, end, StyleSpan(Typeface.ITALIC))
-
             updateEditText(start, end)
         }
 
@@ -205,13 +212,12 @@ class DocsActivity : GraphiteActivity() {
             val end = docsEditText.selectionEnd
 
             handleHtmlTag(start, end, UnderlineSpan())
-
             updateEditText(start, end)
         }
 
     }
 
-    fun handleHtmlTag (start : Int, end : Int, styleSpan: Any) {
+    private fun handleHtmlTag (start : Int, end : Int, styleSpan: Any) {
         docTextHTML!!.setSpan(styleSpan, start, end, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
     }
 
@@ -219,16 +225,17 @@ class DocsActivity : GraphiteActivity() {
         loadDoc()
     }
 
-    fun saveDoc (text : String) {
-        // Blockstack api save text
+    private fun saveDoc (text : String) {
         val putOptions = PutFileOptions()
         val fileName = "/documents/" + intent.getLongExtra("id", 0) + ".json"
 
-        singleDoc!!.content = Html.toHtml(docTextHTML)
+        docTextHTML = SpannableStringBuilder(text)
+        singleDoc!!.content = text.replace("\"", "\\\"")
+
         val json = Gson().toJson(singleDoc)
 
         blockstackSession().putFile(fileName, json, putOptions, { readURL: String ->
-
+            Log.d(TAG, readURL)
             runOnUiThread {
                 // Doc saved
             }
@@ -236,9 +243,7 @@ class DocsActivity : GraphiteActivity() {
 
     }
 
-    fun loadDoc () {
-        // Blockstack api get text from file
-
+    private fun loadDoc () {
         val options = GetFileOptions()
         val filename = "/documents/" + intent.getLongExtra("id", 0) + ".json"
 
@@ -255,9 +260,9 @@ class DocsActivity : GraphiteActivity() {
                             date, date, "")
                 }
 
-                titleText.setText(singleDoc!!.title)
+                titleText.text = singleDoc!!.title
                 docTextHTML = SpannableStringBuilder(singleDoc!!.content)
-                previewTextView.text = docTextHTML
+                previewTextView.text = getHtml(docTextHTML)
 
                 updateEditText(0, 0)
             }
@@ -272,7 +277,7 @@ class DocsActivity : GraphiteActivity() {
             // Change to preview mode
             isPreview = true
 
-            previewTextView.text = docTextHTML
+            previewTextView.text = getHtml(docTextHTML)
 
             editScrollView.visibility = View.GONE
             previewScrollView.visibility = View.VISIBLE
@@ -290,9 +295,17 @@ class DocsActivity : GraphiteActivity() {
         } else 0
     }
 
-    fun updateEditText (selectionStart : Int, selectionEnd : Int) {
-        docsEditText.text = docTextHTML
+    private fun updateEditText (selectionStart : Int, selectionEnd : Int) {
+        docsEditText.setText(getHtml(docTextHTML))
         docsEditText.setSelection(selectionStart, selectionEnd)
+    }
+
+    private fun getHtml(text : SpannableStringBuilder?) : Spanned {
+        return if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            Html.fromHtml(text.toString(), Html.FROM_HTML_MODE_LEGACY)
+        } else {
+            Html.fromHtml(text.toString())
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
