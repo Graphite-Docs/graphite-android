@@ -16,6 +16,7 @@ import com.graphitedocs.graphitedocs.utils.models.SingleDoc
 import kotlinx.android.synthetic.main.activity_docs.*
 import org.blockstack.android.sdk.GetFileOptions
 import org.blockstack.android.sdk.PutFileOptions
+import java.util.*
 
 
 class DocsActivity : GraphiteActivity() {
@@ -244,7 +245,15 @@ class DocsActivity : GraphiteActivity() {
         blockstackSession().getFile(filename, options, {content: Any ->
 
             runOnUiThread {
-                singleDoc = SingleDoc.parseJSON(content.toString())
+                singleDoc = if (content !is ByteArray) {
+                    SingleDoc.parseJSON(content.toString())
+                } else {
+                    val author = userData().json["username"].toString()
+                    val date = intent.getStringExtra("date")
+                    SingleDoc(intent.getStringExtra("title"), date,
+                            ArrayList(), ArrayList(), author, intent.getLongExtra("id", 0),
+                            date, date, "")
+                }
 
                 docTextHTML = SpannableStringBuilder(singleDoc!!.content)
                 previewTextView.text = docTextHTML

@@ -37,13 +37,18 @@ class DocsListActivity : GraphiteActivity() {
 
             blockstackSession().getFile(fileName, getOptions, {content: Any ->
                 // content can be a `String` or a `ByteArray`
-                Log.d(TAG, content.toString())
+                if (content !is ByteArray) Log.d(TAG, content.toString())
 
                 runOnUiThread {
                     val date = SimpleDateFormat("MM/dd/yyyy").format(Date())
                     val id =  Date().time
                     val newDoc = DocsListItem("Untitled", date, ArrayList(), ArrayList(), userData().json["username"].toString(), id, date, date)
-                    val arrayList = parseToArray(content.toString())
+
+                    val arrayList = if (content !is ByteArray) {
+                        parseToArray(content.toString())
+                    } else {
+                        ArrayList()
+                    }
 
                     arrayList.add(newDoc)
                     sortArrayByDate(arrayList)
@@ -69,14 +74,26 @@ class DocsListActivity : GraphiteActivity() {
 
         val options = GetFileOptions()
         val fileName = getString(R.string.documents_list)
-        var arrayList : ArrayList<DocsListItem> = ArrayList()
 
         blockstackSession().getFile(fileName, options, {content: Any ->
             // content can be a `String` or a `ByteArray`
-            Log.d(TAG, content.toString())
+            if (content !is ByteArray) Log.d(TAG, content.toString())
 
             runOnUiThread {
-                arrayList = parseToArray(content.toString())
+                val arrayList = if (content !is ByteArray) {
+                    parseToArray(content.toString())
+                } else {
+                    ArrayList()
+                }
+
+                if (content is ByteArray) {
+                    val putOptions = PutFileOptions()
+                    val json = Gson().toJson(arrayList)
+
+                    blockstackSession().putFile(fileName, json, putOptions, {readURL: String ->
+                        Log.d(TAG, readURL)
+                    })
+                }
 
                 if (arrayList.isEmpty()) {
                     emptyDocsListTextView.visibility = View.VISIBLE
