@@ -171,7 +171,7 @@ class DocsActivity : GraphiteActivity() {
 
             editScrollView.visibility = View.VISIBLE
             bottomDocsEditBar.visibility = View.VISIBLE
-
+            titleText.visibility = View.GONE
             previewScrollView.visibility = View.GONE
             editDocsFab.hide()
             invalidateOptionsMenu()
@@ -282,6 +282,7 @@ class DocsActivity : GraphiteActivity() {
             editScrollView.visibility = View.GONE
             previewScrollView.visibility = View.VISIBLE
             bottomDocsEditBar.visibility = View.GONE
+            titleText.visibility = View.VISIBLE
 
             editDocsFab.show()
             invalidateOptionsMenu()
