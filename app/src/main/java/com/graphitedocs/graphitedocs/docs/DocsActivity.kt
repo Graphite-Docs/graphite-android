@@ -255,6 +255,7 @@ class DocsActivity : GraphiteActivity() {
                             date, date, "")
                 }
 
+                titleText.setText(singleDoc!!.title)
                 docTextHTML = SpannableStringBuilder(singleDoc!!.content)
                 previewTextView.text = docTextHTML
 
