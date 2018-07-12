@@ -41,6 +41,7 @@ class DocsActivity : GraphiteActivity() {
 
     private val TAG = DocsActivity::class.java.simpleName
     private var subject: PublishSubject<Editable>? = null
+    private var progressDialog : MaterialDialog? = null
 
 
     companion object {
@@ -68,6 +69,11 @@ class DocsActivity : GraphiteActivity() {
 
         editScrollView.visibility = View.GONE
         bottomDocsEditBar.visibility = View.GONE
+
+        progressDialog = MaterialDialog.Builder(this)
+                .content("Loading doc")
+                .progress(true, 0)
+                .show()
 
         subject = PublishSubject.create<Editable>()
         (subject as PublishSubject<Editable>).throttleLast(100, TimeUnit.MILLISECONDS)
@@ -239,6 +245,7 @@ class DocsActivity : GraphiteActivity() {
 
     override fun onLoaded() {
         loadDoc()
+        progressDialog!!.cancel()
     }
 
     private fun saveDoc (text : String) {
@@ -259,7 +266,6 @@ class DocsActivity : GraphiteActivity() {
                 // Doc saved
             }
         })
-
     }
 
     private fun loadDoc () {

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.View
+import com.afollestad.materialdialogs.MaterialDialog
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.graphitedocs.graphitedocs.R
@@ -21,6 +22,7 @@ import kotlin.collections.ArrayList
 class DocsListActivity : GraphiteActivity() {
 
     private val TAG = DocsListActivity::class.java.simpleName
+    private var progressDialog : MaterialDialog? = null
 
     companion object {
         fun parseToArray(response : String) :  ArrayList<DocsListItem> {
@@ -41,6 +43,11 @@ class DocsListActivity : GraphiteActivity() {
         setContentView(R.layout.activity_docs_list)
 
         rvDocs.layoutManager = LinearLayoutManager(this)
+
+        progressDialog = MaterialDialog.Builder(this)
+                .content("Loading documents")
+                .progress(true, 0)
+                .show()
     }
 
     override fun onLoaded() {
@@ -123,6 +130,7 @@ class DocsListActivity : GraphiteActivity() {
                     val sectionItemDecoration = RecyclerSectionItemDecoration(resources.getDimensionPixelSize(R.dimen.docs_list_header), true, getSectionCallback(arrayList))
                     rvDocs.addItemDecoration(sectionItemDecoration)
                 }
+                progressDialog!!.cancel()
             }
         })
     }
