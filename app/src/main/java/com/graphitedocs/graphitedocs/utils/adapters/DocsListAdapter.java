@@ -33,12 +33,13 @@ public class DocsListAdapter extends RecyclerView.Adapter<DocsListAdapter.Holder
 
     @Override
     public void onBindViewHolder(Holder holder, int position) {
-        DocsListItem item = mArrayList.get(position);
+        final DocsListItem item = mArrayList.get(position);
 
         holder.titleTextView.setText(item.getTitle());
 
-        if (item.getCollaborators() != null) {
-            holder.collaboratorsTextView.setText(join(item.getCollaborators()));
+        if (item.getSharedWith() != null) {
+            String collaborators = item.getAuthor() + join(item.getSharedWith());
+            holder.collaboratorsTextView.setText(collaborators);
         }
 
 
@@ -49,8 +50,7 @@ public class DocsListAdapter extends RecyclerView.Adapter<DocsListAdapter.Holder
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent newIntent = new Intent(mContext, DocsActivity.class);
-                mContext.startActivity(newIntent);
+                mContext.startActivity(DocsActivity.Companion.newIntent(mContext, item.getTitle(), item.getId(), item.getDate()));
             }
         });
 
@@ -60,8 +60,8 @@ public class DocsListAdapter extends RecyclerView.Adapter<DocsListAdapter.Holder
         StringBuilder text = new StringBuilder();
 
         for (int i = 0; i < list.size(); i++) {
+            text.append(", ");
             text.append(list.get(i));
-            if (i != list.size() - 1) text.append(", ");
         }
         return text.toString();
     }

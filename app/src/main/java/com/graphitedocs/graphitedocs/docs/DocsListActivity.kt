@@ -2,65 +2,163 @@ package com.graphitedocs.graphitedocs.docs
 
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
-import android.widget.Adapter
+import android.util.Log
+import android.view.View
+import com.afollestad.materialdialogs.MaterialDialog
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.graphitedocs.graphitedocs.R
 import com.graphitedocs.graphitedocs.utils.GraphiteActivity
 import com.graphitedocs.graphitedocs.utils.adapters.DocsListAdapter
 import com.graphitedocs.graphitedocs.utils.adapters.RecyclerSectionItemDecoration
 import com.graphitedocs.graphitedocs.utils.models.DocsListItem
-import kotlinx.android.synthetic.main.activity_docs_main.*
+import kotlinx.android.synthetic.main.activity_docs_list.*
 import org.blockstack.android.sdk.GetFileOptions
+import org.blockstack.android.sdk.PutFileOptions
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 class DocsListActivity : GraphiteActivity() {
 
-    private var adapter: Adapter? = null
     private val TAG = DocsListActivity::class.java.simpleName
+    private var progressDialog : MaterialDialog? = null
+
+    companion object {
+        fun parseToArray(response : String) :  ArrayList<DocsListItem> {
+            val DATE_FORMAT = "MM/dd/yyyy"
+            val gsonBuilder = GsonBuilder()
+
+            gsonBuilder.setDateFormat(DATE_FORMAT)
+
+            val gson = gsonBuilder.create()
+            val arr = gson.fromJson(response, Array<DocsListItem>::class.java)
+
+            return arr.toCollection(ArrayList())
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_docs_main)
+        setContentView(R.layout.activity_docs_list)
 
         rvDocs.layoutManager = LinearLayoutManager(this)
-        getData()
+
+        progressDialog = MaterialDialog.Builder(this)
+                .content("Loading documents")
+                .progress(true, 0)
+                .show()
     }
 
     override fun onLoaded() {
-        // Get data
-        rvDocs.adapter = DocsListAdapter(this, getData())
 
-        val sectionItemDecoration = RecyclerSectionItemDecoration(resources.getDimensionPixelSize(R.dimen.docs_list_header), true, getSectionCallback(getData()))
-        rvDocs.addItemDecoration(sectionItemDecoration)
+        newDocFab.setOnClickListener {
+            val getOptions = GetFileOptions()
+            val fileName = getString(R.string.documents_list)
+
+            blockstackSession().getFile(fileName, getOptions, {content: Any ->
+                // content can be a `String` or a `ByteArray`
+                if (content !is ByteArray) Log.d(TAG, content.toString())
+
+                runOnUiThread {
+                    val date = SimpleDateFormat("MM/dd/yyyy").format(Date())
+                    val id =  Date().time
+                    val newDoc = DocsListItem("Untitled", date, ArrayList(), ArrayList(), userData().json["username"].toString(), id, date, date)
+
+                    val arrayList = if (content !is ByteArray) {
+                        parseToArray(content.toString())
+                    } else {
+                        ArrayList()
+                    }
+
+                    arrayList.add(newDoc)
+                    sortArrayByDate(arrayList)
+
+                    val putOptions = PutFileOptions()
+                    val json = Gson().toJson(arrayList)
+
+                    blockstackSession().putFile(fileName, json, putOptions, {readURL: String ->
+
+                        runOnUiThread {
+                            // Start new Activity with this doc
+                            startActivity(DocsActivity.newIntent(baseContext, "Untitled", id, date))
+                        }
+                    })
+                }
+            })
+        }
+
+        loadData()
     }
 
-    private fun getData () : ArrayList<DocsListItem> {
+    private fun loadData () {
 
         val options = GetFileOptions()
-
         val fileName = getString(R.string.documents_list)
 
         blockstackSession().getFile(fileName, options, {content: Any ->
             // content can be a `String` or a `ByteArray`
-            //Log.d(TAG, content.toString())
+            if (content !is ByteArray) Log.d(TAG, content.toString())
 
-            // do something with `content`
+            runOnUiThread {
+                val arrayList = if (content !is ByteArray) {
+                    parseToArray(content.toString())
+                } else {
+                    ArrayList()
+                }
+
+                if (content is ByteArray) {
+                    val putOptions = PutFileOptions()
+                    val json = Gson().toJson(arrayList)
+
+                    blockstackSession().putFile(fileName, json, putOptions, {readURL: String ->
+                        Log.d(TAG, readURL)
+                    })
+                }
+
+                if (arrayList.isEmpty()) {
+                    emptyDocsListTextView.visibility = View.VISIBLE
+                    rvDocs.visibility = View.GONE
+                } else {
+                    emptyDocsListTextView.visibility = View.GONE
+                    rvDocs.visibility = View.VISIBLE
+
+                    sortArrayByDate(arrayList)
+
+                    rvDocs.adapter = DocsListAdapter(this, arrayList)
+
+                    val sectionItemDecoration = RecyclerSectionItemDecoration(resources.getDimensionPixelSize(R.dimen.docs_list_header), true, getSectionCallback(arrayList))
+                    rvDocs.addItemDecoration(sectionItemDecoration)
+                }
+                progressDialog!!.cancel()
+            }
         })
+    }
 
-        // Create mock data for now
-        var doc1 = DocsListItem("Daniel's Story", "May 9, 2018", listOf("danielwang.id"), listOf(""))
-        var doc2 = DocsListItem("Justin's Story", "April 1, 2018", listOf("justinhunter.id"), listOf("Story"))
-        var arrayList = arrayListOf(doc1, doc1, doc1, doc1, doc1, doc2)
+    private fun sortArrayByDate(arrayList: ArrayList<DocsListItem>) {
 
-        return arrayList
+        arrayList.sortWith(kotlin.Comparator { o1, o2 ->
+            val a = o1.date.substring(o1.date.length - 4) + o1.date
+            val b = o2.date.substring(o2.date.length - 4) + o2.date
+            return@Comparator if (a > b) -1 else if (a < b) 1 else 0;
+        })
+    }
+
+    private fun convertToDate(date : String) : String {
+        val inputFormat = SimpleDateFormat("MM/dd/yyyy")
+        val outputFormat = SimpleDateFormat("MMMM dd, yyyy")
+        val dateFormat = inputFormat.parse(date)
+        return outputFormat.format(dateFormat)
     }
 
     private fun getSectionCallback (list : List<DocsListItem> ) : RecyclerSectionItemDecoration.SectionCallback {
         return object : RecyclerSectionItemDecoration.SectionCallback {
             override fun isSection(position: Int): Boolean {
-                return position == 0 || list[position].date != list[position - 1].date
+                return position == 0 || convertToDate(list[position].date) != convertToDate(list[position - 1].date)
             }
 
             override fun getSectionHeader(position: Int): CharSequence {
-                return list[position].date
+                return convertToDate(list[position].date)
             }
         }
     }

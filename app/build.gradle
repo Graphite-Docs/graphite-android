@@ -21,6 +21,9 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+        debug {
+            matchingFallbacks = ['release']
+        }
     }
 }
 
@@ -40,11 +43,16 @@ dependencies {
     annotationProcessor 'com.google.dagger:dagger-compiler:2.16'
     implementation 'com.google.dagger:dagger-android:2.16'
     implementation 'com.google.dagger:dagger-android-support:2.16'
+
+    implementation 'com.google.code.gson:gson:2.8.5'
+
     // if you use the support libraries
     annotationProcessor 'com.google.dagger:dagger-android-processor:2.16'
 
     implementation 'com.github.blockstack:blockstack-android:v0.1.0'
 
+    // Dialog library
+    implementation 'com.afollestad.material-dialogs:core:0.9.6.0'
 }
 
 kapt {

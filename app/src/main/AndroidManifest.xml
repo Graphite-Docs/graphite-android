@@ -15,7 +15,8 @@
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTask"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -30,11 +31,22 @@
                 <data android:scheme="graphitedocs" />
             </intent-filter>
         </activity>
-        <activity android:name=".SelectAppActivity" />
-        <activity android:name=".docs.DocsListActivity"></activity>
-        <activity android:name=".contacts.ContactsMainActivity" />
-        <activity android:name=".vault.VaultMainActivity" />
-        <activity android:name=".docs.DocsActivity"></activity>
+        <activity android:name=".SelectAppActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".docs.DocsListActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"></activity>
+        <activity android:name=".contacts.ContactsMainActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".vault.VaultMainActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".docs.DocsActivity"
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>

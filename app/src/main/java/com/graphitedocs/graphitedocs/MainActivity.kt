@@ -16,7 +16,7 @@ class MainActivity : GraphiteActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        setSupportActionBar(toolbar)
+        setSupportActionBar(toolbarMainActivity)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
         signInButton.setOnClickListener { v: View ->
