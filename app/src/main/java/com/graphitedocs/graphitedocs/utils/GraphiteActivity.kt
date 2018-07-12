@@ -4,12 +4,12 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
-import android.widget.Toast
-import org.blockstack.android.sdk.*
-import java.net.URI
 import android.util.DisplayMetrics
-
+import android.util.Log
+import org.blockstack.android.sdk.BlockstackSession
+import org.blockstack.android.sdk.Scope
+import org.blockstack.android.sdk.UserData
+import java.net.URI
 
 
 open class GraphiteActivity : AppCompatActivity() {
@@ -65,7 +65,6 @@ open class GraphiteActivity : AppCompatActivity() {
         _userData = userData
         Log.d(TAG, "signed in!")
         Log.d(TAG, userData.json.toString())
-//        Toast.makeText(this, "Signed in as ${userData.json.getJSONObject("profile").getString("name")}", Toast.LENGTH_LONG).show();
     }
 
     override fun onNewIntent(intent: Intent?) {
@@ -144,5 +143,4 @@ open class GraphiteActivity : AppCompatActivity() {
         val dp = px / (metrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT)
         return dp
     }
-
 }
