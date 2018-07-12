@@ -21,6 +21,10 @@ import org.blockstack.android.sdk.GetFileOptions
 import org.blockstack.android.sdk.PutFileOptions
 import java.util.*
 import java.util.concurrent.TimeUnit
+import com.afollestad.materialdialogs.MaterialDialog
+import android.text.InputType
+import com.graphitedocs.graphitedocs.docs.DocsListActivity.Companion.parseToArray
+import java.text.SimpleDateFormat
 
 
 class DocsActivity : GraphiteActivity() {
@@ -188,6 +192,18 @@ class DocsActivity : GraphiteActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
 
+        titleText.setOnClickListener {
+            MaterialDialog.Builder(this)
+                    .title("Rename document")
+                    .inputType(InputType.TYPE_CLASS_TEXT)
+                    .input("", singleDoc!!.title, { dialog, input ->
+                        singleDoc!!.title = input.toString()
+                        titleText.text = input
+                        saveDoc(Html.toHtml(docTextSpannable).toString())
+                        updateDocsCollection()
+                    }).show()
+        }
+
         // ******* Text Editor Functions *******
         // *************************************
 
@@ -226,11 +242,14 @@ class DocsActivity : GraphiteActivity() {
     }
 
     private fun saveDoc (text : String) {
+        val date = SimpleDateFormat("MM/dd/yyyy").format(Date())
         val putOptions = PutFileOptions()
         val fileName = "/documents/" + intent.getLongExtra("id", 0) + ".json"
 
         docTextSpannable = SpannableStringBuilder(getHtml(text))
         singleDoc!!.content = text.replace("\"", "\\\"")
+        singleDoc!!.updated = date
+        singleDoc!!.date = date
 
         val json = Gson().toJson(singleDoc)
 
@@ -307,6 +326,34 @@ class DocsActivity : GraphiteActivity() {
         } else {
             Html.fromHtml(text)
         }
+    }
+
+    private fun updateDocsCollection() {
+        val options = GetFileOptions()
+        val fileName = getString(R.string.documents_list)
+
+        blockstackSession().getFile(fileName, options, { content: Any ->
+            if (content !is ByteArray) Log.d(TAG, content.toString())
+
+            runOnUiThread {
+                val arrayList = parseToArray(content.toString())
+
+                arrayList.forEach {
+                    if (it.id == intent.getLongExtra("id", 0)) {
+                        it.title = singleDoc!!.title
+                        it.date = singleDoc!!.date
+                        it.updated = singleDoc!!.updated
+                    }
+                }
+
+                val putOptions = PutFileOptions()
+                val json = Gson().toJson(arrayList)
+
+                blockstackSession().putFile(fileName, json, putOptions, {readURL: String ->
+
+                })
+            }
+        })
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

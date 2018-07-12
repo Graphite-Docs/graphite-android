@@ -51,6 +51,8 @@ dependencies {
 
     implementation 'com.github.blockstack:blockstack-android:v0.1.0'
 
+    // Dialog library
+    implementation 'com.afollestad.material-dialogs:core:0.9.6.0'
 }
 
 kapt {

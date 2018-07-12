@@ -22,6 +22,20 @@ class DocsListActivity : GraphiteActivity() {
 
     private val TAG = DocsListActivity::class.java.simpleName
 
+    companion object {
+        fun parseToArray(response : String) :  ArrayList<DocsListItem> {
+            val DATE_FORMAT = "MM/dd/yyyy"
+            val gsonBuilder = GsonBuilder()
+
+            gsonBuilder.setDateFormat(DATE_FORMAT)
+
+            val gson = gsonBuilder.create()
+            val arr = gson.fromJson(response, Array<DocsListItem>::class.java)
+
+            return arr.toCollection(ArrayList())
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_docs_list)
@@ -111,18 +125,6 @@ class DocsListActivity : GraphiteActivity() {
                 }
             }
         })
-    }
-
-    private fun parseToArray(response : String) :  ArrayList<DocsListItem> {
-        val DATE_FORMAT = "MM/dd/yyyy"
-        val gsonBuilder = GsonBuilder()
-
-        gsonBuilder.setDateFormat(DATE_FORMAT)
-
-        val gson = gsonBuilder.create()
-        val arr = gson.fromJson(response, Array<DocsListItem>::class.java)
-
-        return arr.toCollection(ArrayList())
     }
 
     private fun sortArrayByDate(arrayList: ArrayList<DocsListItem>) {
