@@ -47,15 +47,10 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <com.graphitedocs.graphitedocs.uiviews.GraphiteEditText
+            <jp.wasabeef.richeditor.RichEditor
                 android:id="@+id/docsEditText"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="40dp"
-                android:paddingBottom="60dp"
-                android:textColor="@color/colorPrimary"
-                android:gravity="top|left"
-                android:background="@android:color/transparent"/>
+                android:layout_height="wrap_content" />
 
         </ScrollView>
 
@@ -63,7 +58,7 @@
         <ScrollView
             android:id="@+id/previewScrollView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
 
             <TextView
                 android:id="@+id/previewTextView"

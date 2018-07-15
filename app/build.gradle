@@ -53,6 +53,9 @@ dependencies {
 
     // Dialog library
     implementation 'com.afollestad.material-dialogs:core:0.9.6.0'
+
+    // Rich text editor library
+    implementation 'jp.wasabeef:richeditor-android:1.2.2'
 }
 
 kapt {
