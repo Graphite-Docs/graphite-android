@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Handler
 import android.text.Html
 import android.text.InputType
 import android.text.Spanned
@@ -15,22 +16,25 @@ import com.graphitedocs.graphitedocs.R
 import com.graphitedocs.graphitedocs.docs.DocsListActivity.Companion.parseToArray
 import com.graphitedocs.graphitedocs.utils.GraphiteActivity
 import com.graphitedocs.graphitedocs.utils.models.SingleDoc
-import io.reactivex.android.schedulers.AndroidSchedulers
+import com.jaredrummler.android.colorpicker.ColorPickerDialog
+import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.activity_docs.*
 import org.blockstack.android.sdk.GetFileOptions
 import org.blockstack.android.sdk.PutFileOptions
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.concurrent.TimeUnit
 
 
-class DocsActivity : GraphiteActivity() {
+class DocsActivity : GraphiteActivity(), ColorPickerDialogListener {
 
     private val FAB_MARGIN = 16f
+    private val TEXT_COLOR_DIALOG = 0
+    private val BACKGROUND_COLOR_DIALOG = 1
 
     private var gestureDetector : GestureDetector? = null
     private var isPreview : Boolean = true
+    private var textChanged : Boolean = false
 
     private var singleDoc : SingleDoc? = null
 
@@ -70,17 +74,29 @@ class DocsActivity : GraphiteActivity() {
         docsEditText.setPadding(40, 40, 40, 60)
         docsEditText.setEditorBackgroundColor(Color.TRANSPARENT)
 
+        val handler = Handler()
+        val delay = 3000L //milliseconds
+
+        handler.postDelayed(object : Runnable {
+            override fun run() {
+                if (textChanged) {
+                    saveDoc(docsEditText.html)
+                }
+                handler.postDelayed(this, delay)
+            }
+        }, delay)
+
         progressDialog = MaterialDialog.Builder(this)
                 .content("Loading doc")
                 .progress(true, 0)
                 .show()
 
-        subject = PublishSubject.create<String>()
-        (subject as PublishSubject<String>).throttleLast(100, TimeUnit.MILLISECONDS)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    text -> saveDoc(text)
-                })
+//        subject = PublishSubject.create<String>()
+//        (subject as PublishSubject<String>).throttleLast(100, TimeUnit.MILLISECONDS)
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe({
+//                    text -> saveDoc(text)
+//                })
 
 
         gestureDetector = GestureDetector(this, object : GestureDetector.OnGestureListener {
@@ -187,7 +203,7 @@ class DocsActivity : GraphiteActivity() {
         }
 
         docsEditText.setOnTextChangeListener {
-            subject!!.onNext(it)
+            textChanged = true
         }
 
         titleText.setOnClickListener {
@@ -207,20 +223,39 @@ class DocsActivity : GraphiteActivity() {
 
         boldButton.setOnClickListener {
             docsEditText.setBold()
+            textChanged = true
         }
 
         italicButton.setOnClickListener {
             docsEditText.setItalic()
+            textChanged = true
         }
 
         underlineButton.setOnClickListener {
             docsEditText.setUnderline()
+            textChanged = true
+        }
+
+        colorTextButton.setOnClickListener {
+            hideKeyboard(this@DocsActivity)
+            ColorPickerDialog.newBuilder()
+                    .setDialogType(ColorPickerDialog.TYPE_PRESETS)
+                    .setAllowCustom(true)
+                    .setDialogId(TEXT_COLOR_DIALOG)
+                    .show(this)
         }
     }
 
     override fun onLoaded() {
         loadDoc()
         progressDialog!!.cancel()
+    }
+
+    override fun onDialogDismissed(dialogId: Int) {}
+
+    override fun onColorSelected(dialogId: Int, color: Int) {
+        docsEditText.setTextColor(color)
+        textChanged = true
     }
 
     private fun saveDoc (text : String) {
@@ -238,6 +273,7 @@ class DocsActivity : GraphiteActivity() {
             Log.d(TAG, readURL)
             runOnUiThread {
                 // Doc saved
+                textChanged = false
             }
         })
     }
@@ -266,7 +302,7 @@ class DocsActivity : GraphiteActivity() {
 
                 titleText.text = singleDoc!!.title
                 docsEditText.html = singleDoc!!.content
-                previewTextView.text = fromHtml(singleDoc!!.content)
+                previewTextView.text = fromHtml(replaceSpanToFontTag(singleDoc!!.content))
             }
         })
     }
@@ -279,7 +315,7 @@ class DocsActivity : GraphiteActivity() {
             // Change to preview mode
             isPreview = true
 
-            previewTextView.text = fromHtml(docsEditText.html)
+            previewTextView.text = fromHtml(replaceSpanToFontTag(docsEditText.html))
 
             editScrollView.visibility = View.GONE
             previewScrollView.visibility = View.VISIBLE
@@ -291,11 +327,37 @@ class DocsActivity : GraphiteActivity() {
         }
     }
 
+
     fun getBottomNavBarHeight() : Int {
         val resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android")
         return if (resourceId > 0) {
             resources.getDimensionPixelSize(resourceId)
         } else 0
+    }
+
+    private fun replaceSpanToFontTag(string: String) : String {
+        var newString =  string.replace("span", "font")
+                               .replace("style=\"color: ", "color=\"")
+
+        var index = newString.indexOf("rgb")
+
+        // Following code replaces rgb(num, num, num) with #000000 hex
+        while (index > -1) {
+            val endIndex = newString.indexOf(")", index)
+            var nextIndex =  newString.indexOf(",", index)
+
+            val r = newString.substring(index+4, nextIndex).toInt()
+            val g = newString.substring(nextIndex + 2, newString.indexOf(",", nextIndex + 2)).toInt()
+
+            nextIndex = newString.indexOf(",", nextIndex + 2)
+
+            val b = newString.substring(nextIndex + 2, endIndex).toInt()
+
+            newString = newString.replaceRange(index, endIndex + 2, String.format("#%02x%02x%02x", r, g, b).toUpperCase())
+            index = newString.indexOf("rgb")
+        }
+
+        return newString
     }
 
     private fun fromHtml(text : String?) : Spanned {
