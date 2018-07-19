@@ -13,8 +13,8 @@ import android.view.*
 import com.afollestad.materialdialogs.MaterialDialog
 import com.google.gson.Gson
 import com.graphitedocs.graphitedocs.R
-import com.graphitedocs.graphitedocs.docs.DocsListActivity.Companion.parseToArray
 import com.graphitedocs.graphitedocs.utils.GraphiteActivity
+import com.graphitedocs.graphitedocs.utils.models.DocsList
 import com.graphitedocs.graphitedocs.utils.models.SingleDoc
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
@@ -376,18 +376,18 @@ class DocsActivity : GraphiteActivity(), ColorPickerDialogListener {
             if (content !is ByteArray) Log.d(TAG, content.toString())
 
             runOnUiThread {
-                val arrayList = parseToArray(content.toString())
+                val docsList = DocsList.parseJSON(content.toString())
 
-                arrayList.forEach {
+                docsList.value.forEach {
                     if (it.id == intent.getLongExtra("id", 0)) {
                         it.title = singleDoc!!.title
                         it.date = singleDoc!!.date
-                        it.updated = singleDoc!!.updated
+                        it.updated = singleDoc!!.updated!!
                     }
                 }
 
                 val putOptions = PutFileOptions()
-                val json = Gson().toJson(arrayList)
+                val json = Gson().toJson(docsList)
 
                 blockstackSession().putFile(fileName, json, putOptions, {readURL: String ->
 

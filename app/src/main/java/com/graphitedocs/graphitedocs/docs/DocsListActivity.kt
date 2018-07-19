@@ -6,11 +6,11 @@ import android.util.Log
 import android.view.View
 import com.afollestad.materialdialogs.MaterialDialog
 import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import com.graphitedocs.graphitedocs.R
 import com.graphitedocs.graphitedocs.utils.GraphiteActivity
 import com.graphitedocs.graphitedocs.utils.adapters.DocsListAdapter
 import com.graphitedocs.graphitedocs.utils.adapters.RecyclerSectionItemDecoration
+import com.graphitedocs.graphitedocs.utils.models.DocsList
 import com.graphitedocs.graphitedocs.utils.models.DocsListItem
 import kotlinx.android.synthetic.main.activity_docs_list.*
 import org.blockstack.android.sdk.GetFileOptions
@@ -23,20 +23,6 @@ class DocsListActivity : GraphiteActivity() {
 
     private val TAG = DocsListActivity::class.java.simpleName
     private var progressDialog : MaterialDialog? = null
-
-    companion object {
-        fun parseToArray(response : String) :  ArrayList<DocsListItem> {
-            val DATE_FORMAT = "MM/dd/yyyy"
-            val gsonBuilder = GsonBuilder()
-
-            gsonBuilder.setDateFormat(DATE_FORMAT)
-
-            val gson = gsonBuilder.create()
-            val arr = gson.fromJson(response, Array<DocsListItem>::class.java)
-
-            return arr.toCollection(ArrayList())
-        }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,19 +49,18 @@ class DocsListActivity : GraphiteActivity() {
                 runOnUiThread {
                     val date = SimpleDateFormat("MM/dd/yyyy").format(Date())
                     val id =  Date().time
-                    val newDoc = DocsListItem("Untitled", date, ArrayList(), ArrayList(), userData().json["username"].toString(), id, date, date)
-
-                    val arrayList = if (content !is ByteArray) {
-                        parseToArray(content.toString())
+                    val newDoc = DocsListItem("Untitled", date, ArrayList(), ArrayList(), userData().json["username"].toString(), id, date, date, "documents")
+                    val docsList = if (content !is ByteArray) {
+                        DocsList.parseJSON(content.toString())
                     } else {
-                        ArrayList()
+                        DocsList(ArrayList())
                     }
 
-                    arrayList.add(newDoc)
-                    sortArrayByDate(arrayList)
+                    docsList.value.add(newDoc)
+                    sortArrayByUpdatedDate(docsList.value)
 
                     val putOptions = PutFileOptions()
-                    val json = Gson().toJson(arrayList)
+                    val json = Gson().toJson(docsList)
 
                     blockstackSession().putFile(fileName, json, putOptions, {readURL: String ->
 
@@ -102,7 +87,7 @@ class DocsListActivity : GraphiteActivity() {
 
             runOnUiThread {
                 val arrayList = if (content !is ByteArray) {
-                    parseToArray(content.toString())
+                    DocsList.parseJSON(content.toString()).value
                 } else {
                     ArrayList()
                 }
@@ -123,7 +108,7 @@ class DocsListActivity : GraphiteActivity() {
                     emptyDocsListTextView.visibility = View.GONE
                     rvDocs.visibility = View.VISIBLE
 
-                    sortArrayByDate(arrayList)
+                    sortArrayByUpdatedDate(arrayList)
 
                     rvDocs.adapter = DocsListAdapter(this, arrayList)
 
@@ -135,11 +120,11 @@ class DocsListActivity : GraphiteActivity() {
         })
     }
 
-    private fun sortArrayByDate(arrayList: ArrayList<DocsListItem>) {
+    private fun sortArrayByUpdatedDate(arrayList: ArrayList<DocsListItem>) {
 
         arrayList.sortWith(kotlin.Comparator { o1, o2 ->
-            val a = o1.date.substring(o1.date.length - 4) + o1.date
-            val b = o2.date.substring(o2.date.length - 4) + o2.date
+            val a = o1.updated.substring(o1.updated.length - 4) + o1.updated
+            val b = o2.updated.substring(o2.updated.length - 4) + o2.updated
             return@Comparator if (a > b) -1 else if (a < b) 1 else 0;
         })
     }
@@ -154,11 +139,11 @@ class DocsListActivity : GraphiteActivity() {
     private fun getSectionCallback (list : List<DocsListItem> ) : RecyclerSectionItemDecoration.SectionCallback {
         return object : RecyclerSectionItemDecoration.SectionCallback {
             override fun isSection(position: Int): Boolean {
-                return position == 0 || convertToDate(list[position].date) != convertToDate(list[position - 1].date)
+                return position == 0 || convertToDate(list[position].updated) != convertToDate(list[position - 1].updated)
             }
 
             override fun getSectionHeader(position: Int): CharSequence {
-                return convertToDate(list[position].date)
+                return convertToDate(list[position].updated)
             }
         }
     }
