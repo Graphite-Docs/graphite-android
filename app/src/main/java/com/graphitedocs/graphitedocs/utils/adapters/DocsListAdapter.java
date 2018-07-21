@@ -50,7 +50,7 @@ public class DocsListAdapter extends RecyclerView.Adapter<DocsListAdapter.Holder
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mContext.startActivity(DocsActivity.Companion.newIntent(mContext, item.getTitle(), item.getId(), item.getDate()));
+                mContext.startActivity(DocsActivity.Companion.newIntent(mContext, item.getTitle(), item.getId(), item.getUpdated()));
             }
         });
 

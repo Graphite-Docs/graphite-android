@@ -3,7 +3,6 @@ package com.graphitedocs.graphitedocs.utils.models
 import com.google.gson.GsonBuilder
 
 class SingleDoc(var title: String,
-                var date: String,
                 var sharedWith: List<String>?,
                 var tags: List<String>?,
                 var author: String,
@@ -23,7 +22,7 @@ class SingleDoc(var title: String,
             var singleDoc: SingleDoc? = gson.fromJson(response, SingleDoc::class.java)
 
             if (singleDoc == null) {
-                singleDoc = SingleDoc("Untitled", "", null, null, "", 0, "", "", "" )
+                singleDoc = SingleDoc("Untitled", null, null, "", 0, "", "", "" )
             }
             return singleDoc
         }

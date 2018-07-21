@@ -20,6 +20,7 @@ import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.activity_docs.*
+import kotlinx.android.synthetic.main.activity_docs.view.*
 import org.blockstack.android.sdk.GetFileOptions
 import org.blockstack.android.sdk.PutFileOptions
 import java.text.SimpleDateFormat
@@ -244,6 +245,14 @@ class DocsActivity : GraphiteActivity(), ColorPickerDialogListener {
                     .setDialogId(TEXT_COLOR_DIALOG)
                     .show(this)
         }
+
+        numListButton.setOnClickListener {
+            docsEditText.setNumbers()
+        }
+
+        bulletListButton.setOnClickListener {
+            docsEditText.setBullets()
+        }
     }
 
     override fun onLoaded() {
@@ -265,7 +274,6 @@ class DocsActivity : GraphiteActivity(), ColorPickerDialogListener {
 
         singleDoc!!.content = text.replace("\"", "\\\"")
         singleDoc!!.updated = date
-        singleDoc!!.date = date
 
         val json = Gson().toJson(singleDoc)
 
@@ -290,8 +298,8 @@ class DocsActivity : GraphiteActivity(), ColorPickerDialogListener {
                 } else {
                     val author = userData().json["username"].toString()
                     val date = intent.getStringExtra("date")
-                    SingleDoc(intent.getStringExtra("title"), date,
-                            ArrayList(), ArrayList(), author, intent.getLongExtra("id", 0),
+                    SingleDoc(intent.getStringExtra("title"), ArrayList(), ArrayList(),
+                            author, intent.getLongExtra("id", 0),
                             date, date, "")
                 }
 
@@ -381,7 +389,6 @@ class DocsActivity : GraphiteActivity(), ColorPickerDialogListener {
                 docsList.value.forEach {
                     if (it.id == intent.getLongExtra("id", 0)) {
                         it.title = singleDoc!!.title
-                        it.date = singleDoc!!.date
                         it.updated = singleDoc!!.updated!!
                     }
                 }

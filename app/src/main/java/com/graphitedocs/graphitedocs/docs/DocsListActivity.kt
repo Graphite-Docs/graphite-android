@@ -49,7 +49,7 @@ class DocsListActivity : GraphiteActivity() {
                 runOnUiThread {
                     val date = SimpleDateFormat("MM/dd/yyyy").format(Date())
                     val id =  Date().time
-                    val newDoc = DocsListItem("Untitled", date, ArrayList(), ArrayList(), userData().json["username"].toString(), id, date, date, "documents")
+                    val newDoc = DocsListItem("Untitled", ArrayList(), ArrayList(), userData().json["username"].toString(), id, date, date, "documents")
                     val docsList = if (content !is ByteArray) {
                         DocsList.parseJSON(content.toString())
                     } else {
