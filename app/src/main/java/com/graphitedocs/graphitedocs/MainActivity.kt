@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import com.graphitedocs.graphitedocs.docs.DocsListActivity
 import com.graphitedocs.graphitedocs.utils.GraphiteActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.content_main.*
@@ -39,7 +40,7 @@ class MainActivity : GraphiteActivity() {
 
     override fun onSignIn(userData: UserData) {
         super.onSignIn(userData)
-        val intent = Intent(this, SelectAppActivity::class.java)
+        val intent = Intent(this, DocsListActivity::class.java) // TODO: Add SelectAppActivity as in the future
         startActivity(intent)
     }
 }

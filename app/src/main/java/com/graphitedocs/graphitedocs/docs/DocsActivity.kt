@@ -2,45 +2,45 @@ package com.graphitedocs.graphitedocs.docs
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Typeface
+import android.graphics.Color
 import android.os.Bundle
-import android.text.*
-import android.text.style.StyleSpan
-import android.text.style.UnderlineSpan
+import android.os.Handler
+import android.text.Html
+import android.text.InputType
+import android.text.Spanned
 import android.util.Log
 import android.view.*
+import com.afollestad.materialdialogs.MaterialDialog
 import com.google.gson.Gson
 import com.graphitedocs.graphitedocs.R
 import com.graphitedocs.graphitedocs.utils.GraphiteActivity
-import com.graphitedocs.graphitedocs.utils.UndoRedoHelper
+import com.graphitedocs.graphitedocs.utils.models.DocsList
 import com.graphitedocs.graphitedocs.utils.models.SingleDoc
-import io.reactivex.android.schedulers.AndroidSchedulers
+import com.jaredrummler.android.colorpicker.ColorPickerDialog
+import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
 import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.activity_docs.*
+import kotlinx.android.synthetic.main.activity_docs.view.*
 import org.blockstack.android.sdk.GetFileOptions
 import org.blockstack.android.sdk.PutFileOptions
-import java.util.*
-import java.util.concurrent.TimeUnit
-import com.afollestad.materialdialogs.MaterialDialog
-import android.text.InputType
-import com.graphitedocs.graphitedocs.docs.DocsListActivity.Companion.parseToArray
 import java.text.SimpleDateFormat
+import java.util.*
 
 
-class DocsActivity : GraphiteActivity() {
+class DocsActivity : GraphiteActivity(), ColorPickerDialogListener {
 
     private val FAB_MARGIN = 16f
+    private val TEXT_COLOR_DIALOG = 0
+    private val BACKGROUND_COLOR_DIALOG = 1
 
     private var gestureDetector : GestureDetector? = null
     private var isPreview : Boolean = true
-
-    private var undoRedoHelper : UndoRedoHelper? = null
+    private var textChanged : Boolean = false
 
     private var singleDoc : SingleDoc? = null
-    private var docTextSpannable : SpannableStringBuilder? = null
 
     private val TAG = DocsActivity::class.java.simpleName
-    private var subject: PublishSubject<Editable>? = null
+    private var subject: PublishSubject<String>? = null
     private var progressDialog : MaterialDialog? = null
 
 
@@ -70,19 +70,35 @@ class DocsActivity : GraphiteActivity() {
         editScrollView.visibility = View.GONE
         bottomDocsEditBar.visibility = View.GONE
 
+        docsEditText.setEditorHeight(400)
+        docsEditText.setEditorFontSize(18)
+        docsEditText.setPadding(40, 40, 40, 60)
+        docsEditText.setEditorBackgroundColor(Color.TRANSPARENT)
+
+        val handler = Handler()
+        val delay = 3000L //milliseconds
+
+        handler.postDelayed(object : Runnable {
+            override fun run() {
+                if (textChanged) {
+                    saveDoc(docsEditText.html)
+                }
+                handler.postDelayed(this, delay)
+            }
+        }, delay)
+
         progressDialog = MaterialDialog.Builder(this)
                 .content("Loading doc")
                 .progress(true, 0)
                 .show()
 
-        subject = PublishSubject.create<Editable>()
-        (subject as PublishSubject<Editable>).throttleLast(100, TimeUnit.MILLISECONDS)
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({
-                    text -> saveDoc(Html.toHtml(text))
-                })
+//        subject = PublishSubject.create<String>()
+//        (subject as PublishSubject<String>).throttleLast(100, TimeUnit.MILLISECONDS)
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe({
+//                    text -> saveDoc(text)
+//                })
 
-        undoRedoHelper = UndoRedoHelper(docsEditText)
 
         gestureDetector = GestureDetector(this, object : GestureDetector.OnGestureListener {
             override fun onShowPress(e: MotionEvent?) {
@@ -187,16 +203,9 @@ class DocsActivity : GraphiteActivity() {
             invalidateOptionsMenu()
         }
 
-        docsEditText.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                if (s != null) {
-                    subject!!.onNext(s)
-                }
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-        })
+        docsEditText.setOnTextChangeListener {
+            textChanged = true
+        }
 
         titleText.setOnClickListener {
             MaterialDialog.Builder(this)
@@ -205,7 +214,7 @@ class DocsActivity : GraphiteActivity() {
                     .input("", singleDoc!!.title, { dialog, input ->
                         singleDoc!!.title = input.toString()
                         titleText.text = input
-                        saveDoc(Html.toHtml(docTextSpannable).toString())
+                        saveDoc(docsEditText.html)
                         updateDocsCollection()
                     }).show()
         }
@@ -214,33 +223,36 @@ class DocsActivity : GraphiteActivity() {
         // *************************************
 
         boldButton.setOnClickListener {
-            val start = docsEditText.selectionStart
-            val end = docsEditText.selectionEnd
-
-            handleHtmlTag(start, end, StyleSpan(Typeface.BOLD))
-            updateEditText(start, end)
+            docsEditText.setBold()
+            textChanged = true
         }
 
         italicButton.setOnClickListener {
-            val start = docsEditText.selectionStart
-            val end = docsEditText.selectionEnd
-
-            handleHtmlTag(start, end, StyleSpan(Typeface.ITALIC))
-            updateEditText(start, end)
+            docsEditText.setItalic()
+            textChanged = true
         }
 
         underlineButton.setOnClickListener {
-            val start = docsEditText.selectionStart
-            val end = docsEditText.selectionEnd
-
-            handleHtmlTag(start, end, UnderlineSpan())
-            updateEditText(start, end)
+            docsEditText.setUnderline()
+            textChanged = true
         }
 
-    }
+        colorTextButton.setOnClickListener {
+            hideKeyboard(this@DocsActivity)
+            ColorPickerDialog.newBuilder()
+                    .setDialogType(ColorPickerDialog.TYPE_PRESETS)
+                    .setAllowCustom(true)
+                    .setDialogId(TEXT_COLOR_DIALOG)
+                    .show(this)
+        }
 
-    private fun handleHtmlTag (start : Int, end : Int, styleSpan: Any) {
-        docTextSpannable!!.setSpan(styleSpan, start, end, Spannable.SPAN_INCLUSIVE_INCLUSIVE)
+        numListButton.setOnClickListener {
+            docsEditText.setNumbers()
+        }
+
+        bulletListButton.setOnClickListener {
+            docsEditText.setBullets()
+        }
     }
 
     override fun onLoaded() {
@@ -248,15 +260,20 @@ class DocsActivity : GraphiteActivity() {
         progressDialog!!.cancel()
     }
 
+    override fun onDialogDismissed(dialogId: Int) {}
+
+    override fun onColorSelected(dialogId: Int, color: Int) {
+        docsEditText.setTextColor(color)
+        textChanged = true
+    }
+
     private fun saveDoc (text : String) {
         val date = SimpleDateFormat("MM/dd/yyyy").format(Date())
         val putOptions = PutFileOptions()
         val fileName = "/documents/" + intent.getLongExtra("id", 0) + ".json"
 
-        docTextSpannable = SpannableStringBuilder(getHtml(text))
         singleDoc!!.content = text.replace("\"", "\\\"")
         singleDoc!!.updated = date
-        singleDoc!!.date = date
 
         val json = Gson().toJson(singleDoc)
 
@@ -264,6 +281,7 @@ class DocsActivity : GraphiteActivity() {
             Log.d(TAG, readURL)
             runOnUiThread {
                 // Doc saved
+                textChanged = false
             }
         })
     }
@@ -280,16 +298,19 @@ class DocsActivity : GraphiteActivity() {
                 } else {
                     val author = userData().json["username"].toString()
                     val date = intent.getStringExtra("date")
-                    SingleDoc(intent.getStringExtra("title"), date,
-                            ArrayList(), ArrayList(), author, intent.getLongExtra("id", 0),
+                    SingleDoc(intent.getStringExtra("title"), ArrayList(), ArrayList(),
+                            author, intent.getLongExtra("id", 0),
                             date, date, "")
                 }
 
-                titleText.text = singleDoc!!.title
-                docTextSpannable = SpannableStringBuilder(getHtml(singleDoc!!.content))
-                previewTextView.text = docTextSpannable
+                if (content is ByteArray) {
+                    docsEditText.setAlignLeft()
+                    docsEditText.setFontSize(12)
+                }
 
-                updateEditText(0, 0)
+                titleText.text = singleDoc!!.title
+                docsEditText.html = singleDoc!!.content
+                previewTextView.text = fromHtml(replaceSpanToFontTag(singleDoc!!.content))
             }
         })
     }
@@ -302,7 +323,7 @@ class DocsActivity : GraphiteActivity() {
             // Change to preview mode
             isPreview = true
 
-            previewTextView.text = docTextSpannable
+            previewTextView.text = fromHtml(replaceSpanToFontTag(docsEditText.html))
 
             editScrollView.visibility = View.GONE
             previewScrollView.visibility = View.VISIBLE
@@ -314,6 +335,7 @@ class DocsActivity : GraphiteActivity() {
         }
     }
 
+
     fun getBottomNavBarHeight() : Int {
         val resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android")
         return if (resourceId > 0) {
@@ -321,12 +343,32 @@ class DocsActivity : GraphiteActivity() {
         } else 0
     }
 
-    private fun updateEditText (selectionStart : Int, selectionEnd : Int) {
-        docsEditText.text = docTextSpannable
-        docsEditText.setSelection(selectionStart, selectionEnd)
+    private fun replaceSpanToFontTag(string: String) : String {
+        var newString =  string.replace("span", "font")
+                               .replace("style=\"color: ", "color=\"")
+
+        var index = newString.indexOf("rgb")
+
+        // Following code replaces rgb(num, num, num) with #000000 hex
+        while (index > -1) {
+            val endIndex = newString.indexOf(")", index)
+            var nextIndex =  newString.indexOf(",", index)
+
+            val r = newString.substring(index+4, nextIndex).toInt()
+            val g = newString.substring(nextIndex + 2, newString.indexOf(",", nextIndex + 2)).toInt()
+
+            nextIndex = newString.indexOf(",", nextIndex + 2)
+
+            val b = newString.substring(nextIndex + 2, endIndex).toInt()
+
+            newString = newString.replaceRange(index, endIndex + 2, String.format("#%02x%02x%02x", r, g, b).toUpperCase())
+            index = newString.indexOf("rgb")
+        }
+
+        return newString
     }
 
-    private fun getHtml(text : String?) : Spanned {
+    private fun fromHtml(text : String?) : Spanned {
         return if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
             Html.fromHtml(text, Html.FROM_HTML_MODE_LEGACY)
         } else {
@@ -342,18 +384,17 @@ class DocsActivity : GraphiteActivity() {
             if (content !is ByteArray) Log.d(TAG, content.toString())
 
             runOnUiThread {
-                val arrayList = parseToArray(content.toString())
+                val docsList = DocsList.parseJSON(content.toString())
 
-                arrayList.forEach {
+                docsList.value.forEach {
                     if (it.id == intent.getLongExtra("id", 0)) {
                         it.title = singleDoc!!.title
-                        it.date = singleDoc!!.date
-                        it.updated = singleDoc!!.updated
+                        it.updated = singleDoc!!.updated!!
                     }
                 }
 
                 val putOptions = PutFileOptions()
-                val json = Gson().toJson(arrayList)
+                val json = Gson().toJson(docsList)
 
                 blockstackSession().putFile(fileName, json, putOptions, {readURL: String ->
 
@@ -378,9 +419,9 @@ class DocsActivity : GraphiteActivity() {
         val id = item!!.itemId
 
         if (id == R.id.action_undo) {
-            undoRedoHelper?.undo()
+            docsEditText.undo()
         } else if (id == R.id.action_redo) {
-            undoRedoHelper?.redo()
+            docsEditText.redo()
         }
 
         return super.onOptionsItemSelected(item)

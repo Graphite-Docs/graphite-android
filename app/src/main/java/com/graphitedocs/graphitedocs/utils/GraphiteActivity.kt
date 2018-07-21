@@ -10,6 +10,9 @@ import org.blockstack.android.sdk.BlockstackSession
 import org.blockstack.android.sdk.Scope
 import org.blockstack.android.sdk.UserData
 import java.net.URI
+import android.app.Activity
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 
 
 open class GraphiteActivity : AppCompatActivity() {
@@ -116,31 +119,44 @@ open class GraphiteActivity : AppCompatActivity() {
         }
     }
 
-    /**
-     * This method converts dp unit to equivalent pixels, depending on device density.
-     *
-     * @param dp A value in dp (density independent pixels) unit. Which we need to convert into pixels
-     * @param context Context to get resources and device specific display metrics
-     * @return A float value to represent px equivalent to dp depending on device density
-     */
-    fun convertDpToPixel(dp: Float, context: Context): Float {
-        val resources = context.resources
-        val metrics = resources.displayMetrics
-        val px = dp * (metrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT)
-        return px
-    }
+    companion object {
+        fun hideKeyboard(activity: Activity) {
+            val imm = activity.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+            //Find the currently focused view, so we can grab the correct window token from it.
+            var view = activity.currentFocus
+            //If no view currently has focus, create a new one, just so we can grab a window token from it
+            if (view == null) {
+                view = View(activity)
+            }
+            imm.hideSoftInputFromWindow(view.windowToken, 0)
+        }
 
-    /**
-     * This method converts device specific pixels to density independent pixels.
-     *
-     * @param px A value in px (pixels) unit. Which we need to convert into db
-     * @param context Context to get resources and device specific display metrics
-     * @return A float value to represent dp equivalent to px value
-     */
-    fun convertPixelsToDp(px: Float, context: Context): Float {
-        val resources = context.resources
-        val metrics = resources.displayMetrics
-        val dp = px / (metrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT)
-        return dp
+        /**
+         * This method converts dp unit to equivalent pixels, depending on device density.
+         *
+         * @param dp A value in dp (density independent pixels) unit. Which we need to convert into pixels
+         * @param context Context to get resources and device specific display metrics
+         * @return A float value to represent px equivalent to dp depending on device density
+         */
+        fun convertDpToPixel(dp: Float, context: Context): Float {
+            val resources = context.resources
+            val metrics = resources.displayMetrics
+            val px = dp * (metrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT)
+            return px
+        }
+
+        /**
+         * This method converts device specific pixels to density independent pixels.
+         *
+         * @param px A value in px (pixels) unit. Which we need to convert into db
+         * @param context Context to get resources and device specific display metrics
+         * @return A float value to represent dp equivalent to px value
+         */
+        fun convertPixelsToDp(px: Float, context: Context): Float {
+            val resources = context.resources
+            val metrics = resources.displayMetrics
+            val dp = px / (metrics.densityDpi.toFloat() / DisplayMetrics.DENSITY_DEFAULT)
+            return dp
+        }
     }
 }
