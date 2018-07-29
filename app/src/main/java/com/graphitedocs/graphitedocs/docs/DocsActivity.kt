@@ -18,9 +18,7 @@ import com.graphitedocs.graphitedocs.utils.models.DocsList
 import com.graphitedocs.graphitedocs.utils.models.SingleDoc
 import com.jaredrummler.android.colorpicker.ColorPickerDialog
 import com.jaredrummler.android.colorpicker.ColorPickerDialogListener
-import io.reactivex.subjects.PublishSubject
 import kotlinx.android.synthetic.main.activity_docs.*
-import kotlinx.android.synthetic.main.activity_docs.view.*
 import org.blockstack.android.sdk.GetFileOptions
 import org.blockstack.android.sdk.PutFileOptions
 import java.text.SimpleDateFormat
@@ -40,7 +38,6 @@ class DocsActivity : GraphiteActivity(), ColorPickerDialogListener {
     private var singleDoc : SingleDoc? = null
 
     private val TAG = DocsActivity::class.java.simpleName
-    private var subject: PublishSubject<String>? = null
     private var progressDialog : MaterialDialog? = null
 
 
@@ -64,6 +61,7 @@ class DocsActivity : GraphiteActivity(), ColorPickerDialogListener {
         setContentView(R.layout.activity_docs)
         setSupportActionBar(toolbarDocsActivity)
         supportActionBar?.setDisplayShowTitleEnabled(false)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         invalidateOptionsMenu()
 
@@ -91,13 +89,6 @@ class DocsActivity : GraphiteActivity(), ColorPickerDialogListener {
                 .content("Loading doc")
                 .progress(true, 0)
                 .show()
-
-//        subject = PublishSubject.create<String>()
-//        (subject as PublishSubject<String>).throttleLast(100, TimeUnit.MILLISECONDS)
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe({
-//                    text -> saveDoc(text)
-//                })
 
 
         gestureDetector = GestureDetector(this, object : GestureDetector.OnGestureListener {
@@ -422,6 +413,10 @@ class DocsActivity : GraphiteActivity(), ColorPickerDialogListener {
             docsEditText.undo()
         } else if (id == R.id.action_redo) {
             docsEditText.redo()
+        } else if (id == android.R.id.home) {
+            saveDoc(docsEditText.html)
+            this.finish()
+            return true
         }
 
         return super.onOptionsItemSelected(item)
