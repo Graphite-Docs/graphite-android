@@ -1,6 +1,8 @@
 package com.graphitedocs.graphitedocs.docs
 
+import android.graphics.Color
 import android.os.Bundle
+import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
 import android.view.View
@@ -19,7 +21,10 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
-class DocsListActivity : GraphiteActivity() {
+class DocsListActivity : GraphiteActivity(), SwipeRefreshLayout.OnRefreshListener {
+    override fun onRefresh() {
+        loadData()
+    }
 
     private val TAG = DocsListActivity::class.java.simpleName
     private var progressDialog : MaterialDialog? = null
@@ -73,6 +78,9 @@ class DocsListActivity : GraphiteActivity() {
             })
         }
 
+        swipeRefresh.setOnRefreshListener(this)
+        swipeRefresh.setColorSchemeResources(R.color.colorPrimary, R.color.lightGrey ,R.color.colorPrimaryDark)
+
         loadData()
     }
 
@@ -113,8 +121,12 @@ class DocsListActivity : GraphiteActivity() {
                     rvDocs.adapter = DocsListAdapter(this, arrayList)
 
                     val sectionItemDecoration = RecyclerSectionItemDecoration(resources.getDimensionPixelSize(R.dimen.docs_list_header), true, getSectionCallback(arrayList))
+                    if (rvDocs.itemDecorationCount > 0) {
+                        rvDocs.removeItemDecorationAt(0)
+                    }
                     rvDocs.addItemDecoration(sectionItemDecoration)
                 }
+                swipeRefresh.isRefreshing = false
                 progressDialog!!.cancel()
             }
         })

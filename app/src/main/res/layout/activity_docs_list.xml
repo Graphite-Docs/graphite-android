@@ -47,13 +47,20 @@
         android:layout_marginRight="16dp"
         android:layout_marginBottom="27dp" />
 
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rvDocs"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefresh"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipToPadding="true"
-        android:saveEnabled="false"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+        android:layout_height="match_parent">
 
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rvDocs"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="true"
+            android:saveEnabled="false"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"/>
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 </android.support.design.widget.CoordinatorLayout>
