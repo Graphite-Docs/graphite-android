@@ -30,12 +30,12 @@
         android:maxEms="9"/>
 
     <TextView
-        android:id="@+id/docs_list_collaborators"
+        android:id="@+id/created_date"
         android:layout_toRightOf="@id/docs_list_checkbox"
         android:layout_below="@id/docs_list_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="danielwang.id, justin.id"
+        android:text="March 25, 2015"
         android:paddingLeft="10dp"
         android:maxLines="1"
         android:ellipsize="end"

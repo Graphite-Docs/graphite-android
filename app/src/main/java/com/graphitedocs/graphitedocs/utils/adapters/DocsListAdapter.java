@@ -1,7 +1,6 @@
 package com.graphitedocs.graphitedocs.utils.adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,7 +11,9 @@ import com.graphitedocs.graphitedocs.R;
 import com.graphitedocs.graphitedocs.docs.DocsActivity;
 import com.graphitedocs.graphitedocs.utils.models.DocsListItem;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class DocsListAdapter extends RecyclerView.Adapter<DocsListAdapter.Holder> {
@@ -37,10 +38,15 @@ public class DocsListAdapter extends RecyclerView.Adapter<DocsListAdapter.Holder
 
         holder.titleTextView.setText(item.getTitle());
 
-        if (item.getSharedWith() != null) {
-            String collaborators = item.getAuthor() + join(item.getSharedWith());
-            holder.collaboratorsTextView.setText(collaborators);
+        String date;
+        if (item.getCreated() == null) {
+            date = new SimpleDateFormat("MMMM dd, yyyy").format(new Date(item.getUpdated()));
+        } else {
+            date = new SimpleDateFormat("MMMM dd, yyyy").format(new Date(item.getCreated()));
         }
+
+        holder.dateCreatedTextView.setText(date);
+
 
 
         if (item.getTags() != null) {
@@ -74,14 +80,14 @@ public class DocsListAdapter extends RecyclerView.Adapter<DocsListAdapter.Holder
     public class Holder extends RecyclerView.ViewHolder {
 
         private TextView titleTextView;
-        private TextView collaboratorsTextView;
+        private TextView dateCreatedTextView;
         private TextView tagsTextView;
 
         public Holder(View itemView) {
             super(itemView);
 
             titleTextView = itemView.findViewById(R.id.docs_list_title);
-            collaboratorsTextView = itemView.findViewById(R.id.docs_list_collaborators);
+            dateCreatedTextView = itemView.findViewById(R.id.created_date);
             tagsTextView = itemView.findViewById(R.id.docs_list_tags);
         }
     }

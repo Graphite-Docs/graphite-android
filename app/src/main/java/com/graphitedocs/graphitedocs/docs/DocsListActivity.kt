@@ -79,7 +79,7 @@ class DocsListActivity : GraphiteActivity(), SwipeRefreshLayout.OnRefreshListene
         }
 
         swipeRefresh.setOnRefreshListener(this)
-        swipeRefresh.setColorSchemeResources(R.color.colorPrimary, R.color.lightGrey ,R.color.colorPrimaryDark)
+        swipeRefresh.setColorSchemeResources(R.color.colorPrimary, R.color.lightGrey, R.color.colorPrimaryDark)
 
         loadData()
     }
