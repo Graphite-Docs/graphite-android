@@ -1,10 +1,13 @@
 package com.graphitedocs.graphitedocs.utils.adapters;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.graphitedocs.graphitedocs.R;
@@ -18,12 +21,21 @@ import java.util.List;
 
 public class DocsListAdapter extends RecyclerView.Adapter<DocsListAdapter.Holder> {
 
-    Context mContext;
-    ArrayList<DocsListItem> mArrayList;
+    public interface OnItemCheckListener {
+        void onItemCheck (DocsListItem item);
+        void onItemUncheck (DocsListItem item);
+    }
 
-    public DocsListAdapter(Context mContext, ArrayList<DocsListItem> mArrayList) {
+    private Context mContext;
+    private ArrayList<DocsListItem> mArrayList;
+    private SparseBooleanArray mItemStateArray = new SparseBooleanArray();
+    @NonNull
+    private OnItemCheckListener onItemCheckListener;
+
+    public DocsListAdapter(Context mContext, ArrayList<DocsListItem> mArrayList, @NonNull OnItemCheckListener onItemCheckListener) {
         this.mContext = mContext;
         this.mArrayList = mArrayList;
+        this.onItemCheckListener = onItemCheckListener;
     }
 
     @Override
@@ -33,7 +45,7 @@ public class DocsListAdapter extends RecyclerView.Adapter<DocsListAdapter.Holder
     }
 
     @Override
-    public void onBindViewHolder(Holder holder, int position) {
+    public void onBindViewHolder(final Holder holder, final int position) {
         final DocsListItem item = mArrayList.get(position);
 
         holder.titleTextView.setText(item.getTitle());
@@ -60,6 +72,21 @@ public class DocsListAdapter extends RecyclerView.Adapter<DocsListAdapter.Holder
             }
         });
 
+        holder.checkBox.setChecked(mItemStateArray.get(position, false));
+        holder.checkBox.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                if (!mItemStateArray.get(position, false)) {
+                    mItemStateArray.put(position, true);
+                    onItemCheckListener.onItemCheck(item);
+                } else {
+                    mItemStateArray.put(position, false);
+                    onItemCheckListener.onItemUncheck(item);
+                }
+            }
+        });
+
     }
 
     private String join(List<String> list) {
@@ -82,6 +109,7 @@ public class DocsListAdapter extends RecyclerView.Adapter<DocsListAdapter.Holder
         private TextView titleTextView;
         private TextView dateCreatedTextView;
         private TextView tagsTextView;
+        private CheckBox checkBox;
 
         public Holder(View itemView) {
             super(itemView);
@@ -89,6 +117,7 @@ public class DocsListAdapter extends RecyclerView.Adapter<DocsListAdapter.Holder
             titleTextView = itemView.findViewById(R.id.docs_list_title);
             dateCreatedTextView = itemView.findViewById(R.id.created_date);
             tagsTextView = itemView.findViewById(R.id.docs_list_tags);
+            checkBox = itemView.findViewById(R.id.docs_list_checkbox);
         }
     }
 }
