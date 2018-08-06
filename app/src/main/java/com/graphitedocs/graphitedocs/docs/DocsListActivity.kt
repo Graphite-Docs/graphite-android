@@ -1,10 +1,11 @@
 package com.graphitedocs.graphitedocs.docs
 
-import android.graphics.Color
 import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import com.afollestad.materialdialogs.MaterialDialog
 import com.google.gson.Gson
@@ -21,6 +22,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
+
 class DocsListActivity : GraphiteActivity(), SwipeRefreshLayout.OnRefreshListener {
     override fun onRefresh() {
         loadData()
@@ -28,10 +30,15 @@ class DocsListActivity : GraphiteActivity(), SwipeRefreshLayout.OnRefreshListene
 
     private val TAG = DocsListActivity::class.java.simpleName
     private var progressDialog : MaterialDialog? = null
+    private val currentSelectedItems = ArrayList<DocsListItem>()
+    private var showDeleteDocs = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_docs_list)
+        setSupportActionBar(toolbarMainActivity)
+
+        supportActionBar?.setDisplayShowTitleEnabled(false)
 
         rvDocs.layoutManager = LinearLayoutManager(this)
 
@@ -118,7 +125,27 @@ class DocsListActivity : GraphiteActivity(), SwipeRefreshLayout.OnRefreshListene
 
                     sortArrayByUpdatedDate(arrayList)
 
-                    rvDocs.adapter = DocsListAdapter(this, arrayList)
+                    rvDocs.adapter = DocsListAdapter(this, arrayList, object : DocsListAdapter.OnItemCheckListener {
+                        override fun onItemCheck(item: DocsListItem?) {
+                            if (item != null) {
+                                currentSelectedItems.add(item)
+                                if (!showDeleteDocs) {
+                                    // Set the toolbar to show a delete option for these documents
+                                    showDeleteDocs = true
+                                    invalidateOptionsMenu()
+                                }
+                            }
+                        }
+
+                        override fun onItemUncheck(item: DocsListItem?) {
+                            currentSelectedItems.remove(item)
+                            if (currentSelectedItems.size == 0) {
+                                // Hide the delete and bring in original options
+                                showDeleteDocs = false
+                                invalidateOptionsMenu()
+                            }
+                        }
+                    })
 
                     val sectionItemDecoration = RecyclerSectionItemDecoration(resources.getDimensionPixelSize(R.dimen.docs_list_header), true, getSectionCallback(arrayList))
                     if (rvDocs.itemDecorationCount > 0) {
@@ -130,6 +157,81 @@ class DocsListActivity : GraphiteActivity(), SwipeRefreshLayout.OnRefreshListene
                 progressDialog!!.cancel()
             }
         })
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.docslist_toolbar, menu)
+
+        if (menu != null) {
+            for (i in 0 until menu.size())
+                menu.getItem(i).isVisible = showDeleteDocs
+        }
+
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
+        if (menu != null) {
+            for (i in 0 until menu.size())
+                menu.getItem(i).isVisible = showDeleteDocs
+        }
+
+        return super.onPrepareOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        val id = item!!.itemId
+
+        if (id == R.id.action_delete) {
+            deleteDocs()
+        }
+
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun deleteDocs() {
+        showDeleteDocs = false
+
+        val getOptions = GetFileOptions()
+        val fileName = getString(R.string.documents_list)
+
+        blockstackSession().getFile(fileName, getOptions, {content: Any ->
+            // content can be a `String` or a `ByteArray`
+            if (content !is ByteArray) Log.d(TAG, content.toString())
+
+            runOnUiThread {
+
+                val docsList = if (content !is ByteArray) {
+                    DocsList.parseJSON(content.toString())
+                } else {
+                    DocsList(ArrayList())
+                }
+
+                val set = currentSelectedItems.map { it.id }.toSet()
+
+
+                docsList.value.forEach {
+                    if (set.contains(it.id)) {
+                        docsList.value.remove(it)
+                    }
+                }
+
+                sortArrayByUpdatedDate(docsList.value)
+
+                val putOptions = PutFileOptions()
+                val json = Gson().toJson(docsList)
+
+                blockstackSession().putFile(fileName, json, putOptions, {readURL: String ->
+
+                    runOnUiThread {
+                        currentSelectedItems.clear()
+                        invalidateOptionsMenu()
+                        loadData()
+                    }
+                })
+            }
+        })
+
     }
 
     private fun sortArrayByUpdatedDate(arrayList: ArrayList<DocsListItem>) {
