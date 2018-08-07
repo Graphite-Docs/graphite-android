@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import com.afollestad.materialdialogs.MaterialDialog
 import com.google.gson.Gson
 import com.graphitedocs.graphitedocs.R
@@ -163,8 +164,11 @@ class DocsListActivity : GraphiteActivity(), SwipeRefreshLayout.OnRefreshListene
         menuInflater.inflate(R.menu.docslist_toolbar, menu)
 
         if (menu != null) {
-            for (i in 0 until menu.size())
-                menu.getItem(i).isVisible = showDeleteDocs
+            for (i in 0 until menu.size()) {
+                if (menu.getItem(i).itemId == R.id.action_delete) {
+                    menu.getItem(i).isVisible = showDeleteDocs
+                }
+            }
         }
 
         return super.onCreateOptionsMenu(menu)
@@ -172,8 +176,11 @@ class DocsListActivity : GraphiteActivity(), SwipeRefreshLayout.OnRefreshListene
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
         if (menu != null) {
-            for (i in 0 until menu.size())
-                menu.getItem(i).isVisible = showDeleteDocs
+            for (i in 0 until menu.size()) {
+                if (menu.getItem(i).itemId == R.id.action_delete) {
+                    menu.getItem(i).isVisible = showDeleteDocs
+                }
+            }
         }
 
         return super.onPrepareOptionsMenu(menu)
@@ -184,6 +191,13 @@ class DocsListActivity : GraphiteActivity(), SwipeRefreshLayout.OnRefreshListene
 
         if (id == R.id.action_delete) {
             deleteDocs()
+        } else if (id == R.id.action_logout) {
+            blockstackSession().signUserOut {
+                runOnUiThread {
+                    finish()
+                    Toast.makeText(this, "Signed out", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
 
         return super.onOptionsItemSelected(item)
