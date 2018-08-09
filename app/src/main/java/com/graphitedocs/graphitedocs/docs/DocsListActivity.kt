@@ -1,5 +1,6 @@
 package com.graphitedocs.graphitedocs.docs
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.LinearLayoutManager
@@ -10,6 +11,7 @@ import android.view.View
 import android.widget.Toast
 import com.afollestad.materialdialogs.MaterialDialog
 import com.google.gson.Gson
+import com.graphitedocs.graphitedocs.MainActivity
 import com.graphitedocs.graphitedocs.R
 import com.graphitedocs.graphitedocs.utils.GraphiteActivity
 import com.graphitedocs.graphitedocs.utils.adapters.DocsListAdapter
@@ -194,6 +196,8 @@ class DocsListActivity : GraphiteActivity(), SwipeRefreshLayout.OnRefreshListene
         } else if (id == R.id.action_logout) {
             blockstackSession().signUserOut {
                 runOnUiThread {
+                    val intent = Intent(this, MainActivity::class.java)
+                    startActivity(intent)
                     finish()
                     Toast.makeText(this, "Signed out", Toast.LENGTH_SHORT).show()
                 }

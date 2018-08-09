@@ -21,14 +21,14 @@ open class GraphiteActivity : AppCompatActivity() {
     private var _blockstackSession: BlockstackSession? = null
     private var _userData: UserData? = null
 
+    //        val appDomain = URI("https://app.graphitedocs.com") //PROD
+    val appDomain = URI("https://serene-hamilton-56e88e.netlify.com")
+    val redirectURI = URI("${appDomain}/redirect.html")
+    val manifestURI = URI("${appDomain}/manifest.json")
+    val scopes = arrayOf(Scope.StoreWrite)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-//        val appDomain = URI("https://app.graphitedocs.com") //PROD
-        val appDomain = URI("https://serene-hamilton-56e88e.netlify.com")
-        val redirectURI = URI("${appDomain}/redirect.html")
-        val manifestURI = URI("${appDomain}/manifest.json")
-        val scopes = arrayOf(Scope.StoreWrite)
 
         _blockstackSession = BlockstackSession(this, appDomain, redirectURI, manifestURI, scopes,
                 onLoadedCallback = {

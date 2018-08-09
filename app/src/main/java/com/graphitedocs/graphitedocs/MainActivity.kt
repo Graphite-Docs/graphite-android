@@ -40,7 +40,8 @@ class MainActivity : GraphiteActivity() {
 
     override fun onSignIn(userData: UserData) {
         super.onSignIn(userData)
-        val intent = Intent(this, DocsListActivity::class.java) // TODO: Add SelectAppActivity as in the future
+        val intent = Intent(this, DocsListActivity::class.java)
         startActivity(intent)
+        finish()
     }
 }
