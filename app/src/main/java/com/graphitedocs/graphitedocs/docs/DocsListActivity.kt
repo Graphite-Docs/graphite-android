@@ -251,6 +251,12 @@ class DocsListActivity : GraphiteActivity(), SwipeRefreshLayout.OnRefreshListene
     private fun sortArrayByUpdatedDate(arrayList: ArrayList<DocsListItem>) {
 
         arrayList.sortWith(kotlin.Comparator { o1, o2 ->
+            if (o1.updated[1] == '/') {
+                o1.updated = "0" + o1.updated
+            }
+            if (o2.updated[1] == '/') {
+                o2.updated = "0" + o2.updated
+            }
             val a = o1.updated.substring(o1.updated.length - 4) + o1.updated
             val b = o2.updated.substring(o2.updated.length - 4) + o2.updated
             return@Comparator if (a > b) -1 else if (a < b) 1 else 0;
