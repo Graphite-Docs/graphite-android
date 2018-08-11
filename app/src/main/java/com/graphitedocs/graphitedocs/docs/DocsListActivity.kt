@@ -110,9 +110,10 @@ class DocsListActivity : GraphiteActivity(), SwipeRefreshLayout.OnRefreshListene
                     ArrayList()
                 }
 
-                if (content is ByteArray) {
+                if (content is ByteArray || (content is DocsList && content.value.isEmpty())) {
                     val putOptions = PutFileOptions()
-                    val json = Gson().toJson(arrayList)
+                    val newDocsList = DocsList(arrayList)
+                    val json = Gson().toJson(newDocsList)
 
                     blockstackSession().putFile(fileName, json, putOptions, {readURL: String ->
                         Log.d(TAG, readURL)
