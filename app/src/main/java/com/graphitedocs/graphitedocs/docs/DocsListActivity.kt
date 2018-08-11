@@ -110,7 +110,7 @@ class DocsListActivity : GraphiteActivity(), SwipeRefreshLayout.OnRefreshListene
                     ArrayList()
                 }
 
-                if (content is ByteArray || (content is DocsList && content.value.isEmpty())) {
+                if (content is ByteArray) {
                     val putOptions = PutFileOptions()
                     val newDocsList = DocsList(arrayList)
                     val json = Gson().toJson(newDocsList)
